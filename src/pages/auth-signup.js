@@ -22,7 +22,12 @@ export default async function render() {
         </div>
         <div>
           <label class="h-label" for="su-password">Password</label>
-          <input class="wk-input" id="su-password" type="password" placeholder="8+ characters" autocomplete="new-password" />
+          <div style="position:relative;">
+            <input class="wk-input" id="su-password" type="password" placeholder="8+ characters" autocomplete="new-password" style="padding-right:48px;" />
+            <button id="toggle-su-pw" type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:var(--ink3);font-size:18px;display:flex;align-items:center;transition:color 0.15s;" aria-label="Show password">
+              <i class="ph ph-eye" id="toggle-su-pw-icon"></i>
+            </button>
+          </div>
         </div>
         <button class="wk-btn primary" id="signup-btn">Create Account</button>
       </div>
@@ -32,6 +37,20 @@ export default async function render() {
       </p>
     </div>
   `;
+
+  // Password toggle
+  let suPwVisible = false;
+  const suPwInput = el.querySelector('#su-password');
+  const suToggleBtn = el.querySelector('#toggle-su-pw');
+  const suToggleIcon = el.querySelector('#toggle-su-pw-icon');
+  if (suToggleBtn) {
+    suToggleBtn.addEventListener('click', () => {
+      suPwVisible = !suPwVisible;
+      suPwInput.type = suPwVisible ? 'text' : 'password';
+      suToggleIcon.className = suPwVisible ? 'ph ph-eye-slash' : 'ph ph-eye';
+      suToggleBtn.style.color = suPwVisible ? 'var(--amber)' : 'var(--ink3)';
+    });
+  }
 
   el.querySelector('#signup-btn').addEventListener('click', async () => {
     const name     = el.querySelector('#su-name').value.trim();

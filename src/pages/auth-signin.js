@@ -19,7 +19,17 @@ export default async function render() {
         </div>
         <div>
           <label class="h-label" for="signin-password">Password</label>
-          <input class="wk-input" id="signin-password" type="password" placeholder="••••••••" autocomplete="current-password" />
+          <div style="position:relative;">
+            <input class="wk-input" id="signin-password" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:48px;" />
+            <button id="toggle-pw" type="button" style="
+              position:absolute;right:12px;top:50%;transform:translateY(-50%);
+              background:none;border:none;cursor:pointer;padding:4px;
+              color:var(--ink3);font-size:18px;display:flex;align-items:center;
+              transition:color 0.15s;
+            " aria-label="Show password">
+              <i class="ph ph-eye" id="toggle-pw-icon"></i>
+            </button>
+          </div>
         </div>
         <button class="wk-btn primary" id="signin-btn">Sign In</button>
         <button class="wk-btn ghost" id="magic-btn">Send Magic Link</button>
@@ -28,12 +38,27 @@ export default async function render() {
       <p style="text-align:center;margin-top:var(--sp-lg);color:var(--ink3);font-size:var(--text-sm);">
         No account? <a href="#auth/signup" style="color:var(--amber);font-weight:600;">Create one</a>
       </p>
+      <p style="text-align:center;margin-top:var(--sp-sm);font-size:var(--text-caption);">
+        <a href="#auth/forgot-password" style="color:var(--ink3);">Forgot password?</a>
+      </p>
     </div>
   `;
 
+  // Password toggle
+  let pwVisible = false;
+  const pwInput = el.querySelector('#signin-password');
+  const toggleBtn = el.querySelector('#toggle-pw');
+  const toggleIcon = el.querySelector('#toggle-pw-icon');
+  toggleBtn.addEventListener('click', () => {
+    pwVisible = !pwVisible;
+    pwInput.type = pwVisible ? 'text' : 'password';
+    toggleIcon.className = pwVisible ? 'ph ph-eye-slash' : 'ph ph-eye';
+    toggleBtn.style.color = pwVisible ? 'var(--amber)' : 'var(--ink3)';
+  });
+
   el.querySelector('#signin-btn').addEventListener('click', async () => {
     const email    = el.querySelector('#signin-email').value.trim();
-    const password = el.querySelector('#signin-password').value;
+    const password = pwInput.value;
     if (!email || !password) return toastError('Enter email and password');
     const btn = el.querySelector('#signin-btn');
     btn.disabled = true; btn.textContent = 'Signing in…';
