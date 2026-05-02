@@ -1,0 +1,83 @@
+/* ================================================================
+   WANDERKIND — Tab Bar
+   ================================================================ */
+#tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: var(--nav-h);
+  background: rgba(250,246,239,0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-lt);
+  box-shadow: var(--shadow-tab);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 100;
+  padding: 0 4px;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  height: 100%;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  transition: color 0.15s;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab-item:hover  { color: var(--amber-hi); }
+.tab-item.active { color: var(--amber); }
+
+.tab-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+.tab-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Raised centre MORE button */
+.tab-item.tab-more {
+  position: relative;
+}
+.tab-more-bubble {
+  width: 52px;
+  height: 52px;
+  border-radius: 26px;
+  background: rgba(250,246,239,0.95);
+  border: 1.5px solid var(--border-dark);
+  box-shadow: 0 3px 6px rgba(26,18,10,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -22px;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.tab-item.tab-more.active .tab-more-bubble {
+  background: var(--amber);
+  border-color: var(--amber);
+  box-shadow: 0 4px 10px rgba(200,118,42,0.30);
+}
+.tab-item.tab-more .tab-icon {
+  font-size: 22px;
+  color: var(--amber);
+}
+.tab-item.tab-more.active .tab-icon {
+  color: var(--white);
+}

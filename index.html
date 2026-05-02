@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#FAFAF5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="WANDERKIND" />
+  <meta name="description" content="Walk. Trust. Belong." />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <title>WANDERKIND</title>
+
+  <!-- Phosphor icons (lightweight SVG icon set) -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
+  <link rel="stylesheet" href="/src/styles/tokens.css" />
+  <link rel="stylesheet" href="/src/styles/base.css" />
+  <link rel="stylesheet" href="/src/styles/tabs.css" />
+</head>
+<body>
+  <!-- Offline indicator -->
+  <div id="offline-banner">No connection — some features may be unavailable</div>
+
+  <div id="app">
+    <!-- Main page content mounts here -->
+    <div id="page"></div>
+
+    <!-- Tab bar -->
+    <nav id="tab-bar" role="navigation" aria-label="Main navigation">
+      <button class="tab-item" data-tab="myway" aria-label="My Way">
+        <span class="tab-icon"><i class="ph ph-map-trifold"></i></span>
+        <span class="tab-label">My Way</span>
+      </button>
+      <button class="tab-item" data-tab="memories" aria-label="Memories">
+        <span class="tab-icon"><i class="ph ph-images"></i></span>
+        <span class="tab-label">Memories</span>
+      </button>
+      <button class="tab-item tab-more" data-tab="more" aria-label="More">
+        <div class="tab-more-bubble">
+          <span class="tab-icon"><i class="ph ph-squares-four"></i></span>
+        </div>
+      </button>
+      <button class="tab-item" data-tab="messages" aria-label="Messages">
+        <span class="tab-icon"><i class="ph ph-paper-plane-tilt"></i></span>
+        <span class="tab-label">MSG</span>
+      </button>
+      <button class="tab-item" data-tab="me" aria-label="Me">
+        <span class="tab-icon"><i class="ph ph-user"></i></span>
+        <span class="tab-label">Me</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Toast layer -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

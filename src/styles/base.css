@@ -1,0 +1,241 @@
+/* ================================================================
+   WANDERKIND — Base / Reset
+   ================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;           /* body never scrolls — pages scroll */
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 480px;           /* phone-width column, centred on desktop */
+  margin: 0 auto;
+  position: relative;
+  background: var(--bg);
+  box-shadow: 0 0 40px rgba(26,18,10,0.06);
+}
+
+/* Page container */
+#page {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--nav-h);   /* clear tab bar */
+}
+
+/* ── Scrollbar (webkit) ── */
+#page::-webkit-scrollbar { width: 3px; }
+#page::-webkit-scrollbar-track { background: transparent; }
+#page::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Typography helpers ── */
+.mono  { font-family: var(--font-mono); }
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+/* H-LABEL pattern: amber line prefix */
+.h-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: var(--sp-sm);
+}
+.h-label::before {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 1.5px;
+  background: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── WKCard ── */
+.wk-card {
+  background: var(--surface);
+  border: 1px solid var(--border-lt);
+  border-radius: var(--r-lg);
+  padding: var(--sp-lg);
+  box-shadow: var(--shadow-sm);
+}
+.wk-card.gold {
+  border-color: var(--gold-border);
+  background: var(--gold-bg);
+}
+
+/* ── WKButton ── */
+.wk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px var(--sp-lg);
+  border-radius: var(--r-btn);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: opacity 0.15s, transform 0.1s;
+  width: 100%;
+}
+.wk-btn:active { transform: scale(0.98); opacity: 0.85; }
+.wk-btn.primary { background: var(--amber); color: var(--white); }
+.wk-btn.secondary { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--border-dark); }
+.wk-btn.ghost { background: transparent; color: var(--amber); border: 1px solid var(--border-dark); }
+.wk-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── WKInput ── */
+.wk-input {
+  width: 100%;
+  padding: 14px var(--sp-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.wk-input:focus { border-color: var(--amber); }
+.wk-input::placeholder { color: var(--ink3); }
+
+/* ── WKHeader ── */
+.wk-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: var(--sp-md) var(--screen-px);
+  height: var(--header-h);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-lt);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.wk-header .back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--amber);
+  font-size: 20px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+.wk-header h1 {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* ── WKEmpty ── */
+.wk-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-md);
+  padding: var(--sp-4xl) var(--screen-px);
+  text-align: center;
+  color: var(--ink3);
+}
+.wk-empty .icon { font-size: 48px; opacity: 0.4; }
+.wk-empty p { font-size: var(--text-sm); line-height: 1.6; }
+
+/* ── Toast ── */
+#toast-container {
+  position: fixed;
+  bottom: calc(var(--nav-h) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  width: 90%;
+  max-width: 400px;
+}
+.toast {
+  padding: 12px 16px;
+  border-radius: var(--r-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.5px;
+  color: var(--white);
+  background: var(--ink);
+  box-shadow: var(--shadow-lg);
+  animation: toastIn 0.2s ease, toastOut 0.3s ease 2.5s forwards;
+}
+.toast.success { background: var(--green); }
+.toast.error   { background: var(--red); }
+@keyframes toastIn  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+@keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+/* ── Loading spinner ── */
+.wk-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: var(--sp-2xl) auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Row list ── */
+.row-list { display: flex; flex-direction: column; }
+.row-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  padding: var(--sp-md) var(--screen-px);
+  border-bottom: 1px solid var(--border-lt);
+  cursor: pointer;
+  transition: background 0.1s;
+  background: var(--surface);
+}
+.row-item:hover { background: var(--amber-bg); }
+.row-item:last-child { border-bottom: none; }
+
+/* ── Offline banner ── */
+#offline-banner {
+  background: var(--red);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 6px;
+  display: none;
+}
+body.offline #offline-banner { display: block; }

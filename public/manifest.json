@@ -1,0 +1,21 @@
+{
+  "name": "WANDERKIND",
+  "short_name": "WANDERKIND",
+  "description": "Walk. Trust. Belong.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAFAF5",
+  "theme_color": "#FAFAF5",
+  "categories": ["travel", "social", "lifestyle"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    { "name": "My Way",  "url": "/#myway",    "description": "Your routes and wandergroups" },
+    { "name": "Map",     "url": "/#memories", "description": "Community memories" },
+    { "name": "Messages","url": "/#messages", "description": "Your conversations" }
+  ]
+}

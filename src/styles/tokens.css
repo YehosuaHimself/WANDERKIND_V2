@@ -1,0 +1,45 @@
+/* ================================================================
+   WANDERKIND — Design Token System  v6.0
+   ================================================================ */
+:root {
+  --bg:            #FAFAF5;
+  --bg-dark:       #0B0705;
+  --surface:       #FAFAF5;
+  --surface-alt:   #F5F0E8;
+  --parchment:     #F3E7CC;
+  --white:         #FFFFFF;
+  --ink:           #1A120A;
+  --ink2:          #6B5A3E;
+  --ink3:          #9A8B73;
+  --amber:         #C8762A;
+  --amber-hi:      #E09A52;
+  --amber-bg:      rgba(200,118,42,0.08);
+  --amber-line:    rgba(200,118,42,0.15);
+  --gold:          #D4A017;
+  --gold-bg:       rgba(212,160,23,0.10);
+  --gold-border:   rgba(212,160,23,0.25);
+  --green:         #5A7A2B;
+  --green-bg:      rgba(90,122,43,0.08);
+  --blue:          #2E6DA4;
+  --blue-bg:       rgba(46,109,164,0.08);
+  --red:           #B03A3A;
+  --red-bg:        rgba(176,58,58,0.06);
+  --tramp:         #E8740A;
+  --tramp-bg:      rgba(232,116,10,0.08);
+  --border:        #E8DFD0;
+  --border-lt:     rgba(200,118,42,0.10);
+  --border-dark:   rgba(200,118,42,0.15);
+  --sp-xs:   4px;  --sp-sm:  8px;  --sp-md: 16px;
+  --sp-lg:  24px;  --sp-xl: 32px;  --sp-2xl: 48px;
+  --screen-px: 24px;  --nav-h: 64px;  --header-h: 56px;
+  --font-mono: 'Courier New', Courier, monospace;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --text-display: 42px;  --text-h1: 32px;   --text-h2: 24px;
+  --text-h3: 18px;       --text-body: 16px; --text-sm: 14px;
+  --text-caption: 12px;  --text-label: 10px;
+  --r-sm: 6px;  --r-md: 8px;  --r-lg: 12px;
+  --r-xl: 16px; --r-btn: 24px; --r-full: 9999px;
+  --shadow-sm:  0 1px 3px rgba(26,18,10,0.06);
+  --shadow-lg:  0 4px 12px rgba(26,18,10,0.08);
+  --shadow-tab: 0 -1px 8px rgba(26,18,10,0.06);
+}
