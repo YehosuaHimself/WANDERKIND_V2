@@ -328,7 +328,7 @@ export default async function render() {
 
     // Edit, share
     el.querySelector('#edit-profile-btn')?.addEventListener('click', () => navigate('me/edit'));
-    el.querySelector('#share-btn')?.addEventListener('click', () => navigate('more/share'));
+    el.querySelector('#share-btn')?.addEventListener('click', () => navigate('more/share-profile'));
 
     // QR
     el.querySelector('#qr-fullscreen')?.addEventListener('click', showQrModal);

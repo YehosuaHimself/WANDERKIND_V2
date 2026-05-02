@@ -120,3 +120,8 @@ async function boot() {
   initRouter();
 }
 boot();
+
+// Way detail + group walk sub-routes
+defineRoute('more/ways/',           guarded(() => import('./pages/more-way-detail.js')));
+defineRoute('more/group-walk/create',guarded(()=> import('./pages/more-group-walk.js')));
+defineRoute('more/group-walk/',     guarded(() => import('./pages/more-group-walk.js')));
