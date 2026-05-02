@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase.js';
 import { navigate } from '../lib/router.js';
+import { SEED_ROUTES } from '../data/seed-routes.js';
 
 const CARD_COLORS = ['#4A5D3A','#2C3E50','#6B5A3E','#5B3A29','#3D5C5C','#4A3728','#2D4A3E','#5C4033'];
 
@@ -23,8 +24,10 @@ export default async function render() {
   let route = null;
 
   if (routeId) {
+    // Try DB first
     const { data } = await supabase.from('routes').select('*').eq('id', routeId).single();
-    route = data;
+    // Fall back to seed data if DB empty or not found
+    route = data || SEED_ROUTES.find(r => r.id === routeId || r.slug === routeId);
   }
 
   if (!route) {
