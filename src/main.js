@@ -1,5 +1,7 @@
 import { initAuth, getUser } from './lib/auth.js';
 import { initRouter, defineRoute, navigate } from './lib/router.js';
+import { renderMobileGate } from './pages/gate-mobile.js';
+import { renderDesktopLanding } from './pages/gate-desktop.js';
 
 function guarded(loader) {
   return async () => {
@@ -113,12 +115,43 @@ if ('serviceWorker' in navigator) {
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 900;
+}
+function isInstalledPWA() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true;
+}
+
 async function boot() {
+  const mobile = isMobileDevice();
+  const installed = isInstalledPWA();
+
+  // Desktop → org landing page, no app access
+  if (!mobile) {
+    renderDesktopLanding();
+    return;
+  }
+
+  // Mobile browser, not installed → install gate
+  if (!installed) {
+    renderMobileGate();
+    // If user somehow passes the gate (e.g. clicks "I'm in the app" from standalone)
+    window.addEventListener('wk-gate-passed', () => bootApp(), { once: true });
+    return;
+  }
+
+  // Mobile + installed PWA → boot the app
+  await bootApp();
+}
+
+async function bootApp() {
   const session = await initAuth();
   const hash = location.hash.replace(/^#\/?/, '');
   if (!session && !hash.startsWith('auth/')) navigate('auth/signin', { replace: true });
   initRouter();
 }
+
 boot();
 
 // Way detail + group walk sub-routes
