@@ -66,7 +66,7 @@ export default async function render() {
     <div style="display:flex;gap:0;margin:0 16px;border:1px solid var(--border-lt);border-radius:12px;overflow:hidden;">
       ${[['ph-path', dist || '—', 'Distance'],['ph-clock', days || '—', 'Duration'],['ph-users', walkers || '—', 'Walkers']].map(([icon,val,label]) => `
         <div style="flex:1;text-align:center;padding:12px 4px;border-right:1px solid var(--border-lt);">
-          <i class="${icon}" style="font-size:18px;color:var(--amber);"></i>
+          <i class="ph ${icon}" style="font-size:18px;color:var(--amber);"></i>
           <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--ink);margin-top:4px;">${val}</div>
           <div style="font-size:10px;letter-spacing:1.5px;font-family:var(--font-mono);color:var(--ink3);font-weight:600;">${label.toUpperCase()}</div>
         </div>`).join('')}

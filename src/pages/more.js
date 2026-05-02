@@ -42,7 +42,7 @@ export default async function render() {
                   <div class="tile${t.disabled ? ' disabled' : ''}" data-route="${t.route || ''}"
                     style="background:${t.bg || 'var(--surface)'};border-color:${t.accent ? t.accent + '20' : 'var(--border-lt)'};">
                     <div class="tile-icon-circle" style="background:${t.accent ? t.accent + '16' : 'var(--amber-bg)'};">
-                      <i class="${t.icon}" style="color:${t.accent || 'var(--amber)'}; font-size:22px;"></i>
+                      <i class="ph ${t.icon}" style="color:${t.accent || 'var(--amber)'}; font-size:22px;"></i>
                     </div>
                     <div class="tile-label" style="color:${t.accent || 'var(--ink)'};">${t.label}</div>
                   </div>`).join('')}

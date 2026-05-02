@@ -47,7 +47,7 @@ export default async function render() {
       <div class="row-list" style="border:1px solid var(--border-lt);border-radius:var(--r-lg);overflow:hidden;">
         ${ITEMS.map(([icon,label,route]) => `
           <div class="row-item" data-r="${route}">
-            <i class="${icon}" style="font-size:20px;color:var(--amber);width:24px;flex-shrink:0;"></i>
+            <i class="ph ${icon}" style="font-size:20px;color:var(--amber);width:24px;flex-shrink:0;"></i>
             <span style="font-family:var(--font-mono);font-size:var(--text-sm);font-weight:600;letter-spacing:1.5px;">${label}</span>
             <i class="ph ph-caret-right" style="margin-left:auto;color:var(--ink3);font-size:14px;"></i>
           </div>`).join('')}

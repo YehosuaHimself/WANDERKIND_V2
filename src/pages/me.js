@@ -152,7 +152,7 @@ export default async function render() {
           {icon:'ph-sign-out',   label:'SIGN OUT',      route:'__signout__'},
         ].map(item=>`
           <div class="row-item" data-route="${item.route}" style="border-radius:0;">
-            <i class="${item.icon}" style="font-size:20px;color:var(--amber);width:24px;flex-shrink:0;"></i>
+            <i class="ph ${item.icon}" style="font-size:20px;color:var(--amber);width:24px;flex-shrink:0;"></i>
             <span style="font-family:var(--font-mono);font-size:13px;font-weight:600;letter-spacing:1.5px;color:var(--ink);">${item.label}</span>
             <i class="ph ph-caret-right" style="margin-left:auto;color:var(--ink3);font-size:14px;"></i>
           </div>`).join('')}
@@ -182,7 +182,7 @@ export default async function render() {
           {icon:'ph-shield-check',label:'VERIFICATION',      route:'me/verification'},
         ].map(item=>`
           <div class="row-item" data-route="${item.route}" style="border-radius:0;">
-            <i class="${item.icon}" style="font-size:20px;color:var(--amber);width:24px;flex-shrink:0;"></i>
+            <i class="ph ${item.icon}" style="font-size:20px;color:var(--amber);width:24px;flex-shrink:0;"></i>
             <span style="font-family:var(--font-mono);font-size:13px;font-weight:600;letter-spacing:1.5px;color:var(--ink);">${item.label}</span>
             <i class="ph ph-caret-right" style="margin-left:auto;color:var(--ink3);font-size:14px;"></i>
           </div>`).join('')}
