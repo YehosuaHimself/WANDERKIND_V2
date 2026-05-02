@@ -1,10 +1,3 @@
-/**
- * WANDERKIND — Hash router
- * Routes: #myway  #memories  #more  #messages  #me
- *         #auth/signin  #auth/signup  #auth/callback
- *         Plus sub-routes like #me/journey  #me/edit  #more/verification  etc.
- */
-
 const routes = {};
 let currentRoute = null;
 
@@ -13,11 +6,8 @@ export function defineRoute(path, loader) {
 }
 
 export function navigate(path, opts = {}) {
-  if (opts.replace) {
-    location.replace('#' + path);
-  } else {
-    location.hash = '#' + path;
-  }
+  if (opts.replace) location.replace('#' + path);
+  else location.hash = '#' + path;
 }
 
 export function currentPath() {
@@ -28,27 +18,38 @@ async function render(path) {
   const page = document.getElementById('page');
   currentRoute = path;
 
-  // Find longest matching route
-  const route = Object.keys(routes)
-    .filter(r => path === r || path.startsWith(r + '/'))
-    .sort((a, b) => b.length - a.length)[0];
+  // Exact match first, then prefix match (longest prefix wins)
+  let route = routes[path];
+  if (!route) {
+    const prefixMatches = Object.keys(routes)
+      .filter(r => r.endsWith('/') && path.startsWith(r))
+      .sort((a, b) => b.length - a.length);
+    if (prefixMatches.length) route = routes[prefixMatches[0]];
+  }
+  // Fallback: longest non-trailing-slash prefix
+  if (!route) {
+    const partialMatches = Object.keys(routes)
+      .filter(r => !r.endsWith('/') && path.startsWith(r + '/'))
+      .sort((a, b) => b.length - a.length);
+    if (partialMatches.length) route = routes[partialMatches[0]];
+  }
 
   if (!route) {
-    page.innerHTML = `<div class="wk-empty"><p>Page not found</p></div>`;
+    page.innerHTML = `<div class="wk-header"><h1>NOT FOUND</h1></div><div class="wk-empty"><p>Page not found.</p></div>`;
     return;
   }
 
   page.innerHTML = `<div class="wk-spinner"></div>`;
   try {
-    const mod = await routes[route]();
-    if (currentRoute !== path) return; // navigated away during load
+    const mod = await route();
+    if (currentRoute !== path) return;
     page.innerHTML = '';
-    const el = mod.default ? await mod.default(path) : document.createElement('div');
-    if (el instanceof HTMLElement) page.appendChild(el);
-    else page.innerHTML = el;
+    const result = mod.default ? await mod.default(path) : null;
+    if (result instanceof HTMLElement) page.appendChild(result);
+    else if (typeof result === 'string') page.innerHTML = result;
   } catch (err) {
-    console.error('Route error:', err);
-    page.innerHTML = `<div class="wk-empty"><p>Something went wrong</p></div>`;
+    console.error('Route error [' + path + ']:', err);
+    page.innerHTML = `<div class="wk-header"><h1>ERROR</h1></div><div class="wk-empty"><p>Something went wrong loading this page.</p></div>`;
   }
 }
 
@@ -65,13 +66,9 @@ export function initRouter() {
     render(path);
     syncTabBar(path);
   }
-
   window.addEventListener('hashchange', onChange);
-
-  // Tab bar clicks
   document.querySelectorAll('.tab-item[data-tab]').forEach(btn => {
     btn.addEventListener('click', () => navigate(btn.dataset.tab));
   });
-
-  onChange(); // initial render
+  onChange();
 }
