@@ -1,3 +1,4 @@
+import { SEED_ROUTES } from '../data/seed-routes.js';
 import { supabase } from '../lib/supabase.js';
 import { getUser } from '../lib/auth.js';
 import { navigate } from '../lib/router.js';
@@ -15,7 +16,7 @@ export default async function render() {
 
   async function loadRoutes(){
     const {data}=await supabase.from('routes').select('*').order('walker_count',{ascending:false});
-    routes=data||[];
+    routes=(data && data.length)?data:SEED_ROUTES;
   }
   async function loadGroups(){
     const {data}=await supabase.from('group_walks').select('*,organizer:profiles(trail_name)').order('created_at',{ascending:false}).limit(20);
