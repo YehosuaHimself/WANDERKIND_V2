@@ -1855,14 +1855,48 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 })();
 
 /* ══ CUSTOM CURSOR — square dot + lagging square ring ═══════════════
-   Movement via transform:translate() ONLY — never left/top.
-   Reason: animating left/top on position:fixed breaks viewport
-   anchoring in Safari; filter:drop-shadow does the same.
+   Elements created HERE in JS — not from HTML stubs that come after
+   this script tag. getElementById on post-script HTML returns null.
    ═══════════════════════════════════════════════════════════════════ */
 (function () {
-  var dot  = document.getElementById('cursorDot');
-  var ring = document.getElementById('cursorRing');
-  if (!dot || !ring) return;
+  /* Build and inject cursor elements right now, into a live DOM */
+  var dot = document.createElement('div');
+  dot.id = 'cursorDot';
+  dot.setAttribute('aria-hidden', 'true');
+  dot.style.cssText = [
+    'position:fixed',
+    'top:0',
+    'left:0',
+    'width:9px',
+    'height:9px',
+    'background:#7B3A14',
+    'border-radius:0',
+    'pointer-events:none',
+    'z-index:2147483647',
+    'transform:translate(-9999px,-9999px)',
+    'box-shadow:0 0 0 1.5px rgba(255,255,255,0.55)'
+  ].join(';');
+
+  var ring = document.createElement('div');
+  ring.id = 'cursorRing';
+  ring.setAttribute('aria-hidden', 'true');
+  ring.style.cssText = [
+    'position:fixed',
+    'top:0',
+    'left:0',
+    'width:34px',
+    'height:34px',
+    'border:2px solid #7B3A14',
+    'background:transparent',
+    'border-radius:0',
+    'pointer-events:none',
+    'z-index:2147483646',
+    'transform:translate(-9999px,-9999px)',
+    'box-shadow:0 0 0 0.5px rgba(255,255,255,0.3)'
+  ].join(';');
+
+  document.body.appendChild(dot);
+  document.body.appendChild(ring);
 
   /* Half-sizes for centring */
   var dotH  = 4.5;   /* 9 / 2  */
@@ -1992,9 +2026,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 })();
 </script>
 
-<!-- ── CURSOR ELEMENTS — always on top ── -->
-<div class="cursor-dot"  id="cursorDot"  aria-hidden="true"></div>
-<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 
 </body>
 </html>
