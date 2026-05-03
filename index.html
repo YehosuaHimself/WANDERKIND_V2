@@ -36,13 +36,18 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── KILL NATIVE CURSOR EVERYWHERE — no exceptions ── */
-html, body, *, *::before, *::after,
-a, a:hover, a:active, a:focus,
-button, button:hover, button:focus,
-input, input:hover, input:focus,
-select, textarea, label,
-[role="button"], [tabindex] {
+/* ── KILL NATIVE CURSOR — absolute, no exceptions, no overrides ── */
+*,
+*::before,
+*::after,
+html,
+body,
+a, a:link, a:visited, a:hover, a:active, a:focus,
+button, button:hover, button:active, button:focus,
+input, input:hover, input:focus, input:active,
+select, select:hover, textarea, textarea:hover,
+label, [role="button"], [tabindex],
+[class], [id] {
   cursor: none !important;
 }
 
@@ -70,28 +75,34 @@ select, textarea, label,
 /* Firefox */
 html { scrollbar-width: auto; scrollbar-color: var(--gold) transparent; }
 
-/* ── CUSTOM CURSOR ELEMENTS ─────────────────────── */
+/* ── CUSTOM CURSOR — square dot + lagging square ring ─────────────────
+   Dark brown (#3D1A0A), hard corners only, never changes, nothing else
+   ──────────────────────────────────────────────────────────────────── */
 .cursor-dot {
   position: fixed;
   top: 0; left: 0;
-  width: 9px; height: 9px;
+  width: 8px; height: 8px;
   background: #3D1A0A;
-  pointer-events: none;
+  border-radius: 0 !important;
+  pointer-events: none !important;
+  cursor: none !important;
   z-index: 999999;
   transform: translate(-50%, -50%);
   will-change: left, top;
+  mix-blend-mode: normal;
 }
 .cursor-ring {
   position: fixed;
   top: 0; left: 0;
-  width: 30px; height: 30px;
-  border: 1.5px solid #3D1A0A;
+  width: 32px; height: 32px;
+  border: 2px solid #3D1A0A;
   background: transparent;
-  pointer-events: none;
+  border-radius: 0 !important;
+  pointer-events: none !important;
+  cursor: none !important;
   z-index: 999998;
   transform: translate(-50%, -50%);
   will-change: left, top;
-  /* No border-radius — squares only */
 }
 
 html {
@@ -281,7 +292,6 @@ nav {
   text-transform: uppercase;
   padding: 16px 32px;
   border: none;
-  cursor: pointer;
   text-decoration: none;
   transition: background 0.2s, transform 0.15s;
 }
@@ -346,7 +356,6 @@ nav {
   position: relative;
   transform-style: preserve-3d;
   transition: transform 0.12s ease-out;
-  cursor: pointer;
   /* Gold foil border via gradient */
   border-radius: 14px;
   box-shadow:
@@ -1008,7 +1017,6 @@ nav {
   font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  cursor: pointer;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   white-space: nowrap;
   transition: background 0.15s;
@@ -1424,13 +1432,6 @@ footer {
   </div>
 </section>
 
-<!-- ── TICKER ── -->
-<div class="ticker-wrap" aria-hidden="true">
-  <div class="ticker" id="ticker">
-    <!-- Items duplicated in JS for seamless loop -->
-  </div>
-</div>
-
 <!-- ── MANIFESTO ── -->
 <section class="manifesto">
   <div class="manifesto-inner">
@@ -1487,6 +1488,13 @@ footer {
     </div>
   </div>
 </section>
+
+<!-- ── TICKER ── -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker" id="ticker">
+    <!-- Items duplicated in JS for seamless loop -->
+  </div>
+</div>
 
 <!-- ── PILLARS ── -->
 <section class="pillars">
