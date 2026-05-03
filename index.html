@@ -76,33 +76,30 @@ label, [role="button"], [tabindex],
 html { scrollbar-width: auto; scrollbar-color: var(--gold) transparent; }
 
 /* ── CUSTOM CURSOR — square dot + lagging square ring ─────────────────
-   Dark brown (#3D1A0A), hard corners only, never changes, nothing else
+   Dark brown, hard right-angle corners, never any other cursor ever.
    ──────────────────────────────────────────────────────────────────── */
 .cursor-dot {
   position: fixed;
-  top: 0; left: 0;
-  width: 8px; height: 8px;
-  background: #3D1A0A;
-  border-radius: 0 !important;
-  pointer-events: none !important;
-  cursor: none !important;
-  z-index: 999999;
+  top: -100px; left: -100px;
+  width: 9px; height: 9px;
+  background: #5C2A12;
+  border-radius: 0;
+  pointer-events: none;
+  z-index: 2147483647;
   transform: translate(-50%, -50%);
-  will-change: left, top;
-  mix-blend-mode: normal;
+  will-change: transform, left, top;
 }
 .cursor-ring {
   position: fixed;
-  top: 0; left: 0;
-  width: 32px; height: 32px;
-  border: 2px solid #3D1A0A;
+  top: -100px; left: -100px;
+  width: 33px; height: 33px;
+  border: 2px solid #5C2A12;
   background: transparent;
-  border-radius: 0 !important;
-  pointer-events: none !important;
-  cursor: none !important;
-  z-index: 999998;
+  border-radius: 0;
+  pointer-events: none;
+  z-index: 2147483646;
   transform: translate(-50%, -50%);
-  will-change: left, top;
+  will-change: transform, left, top;
 }
 
 html {
@@ -664,7 +661,7 @@ nav {
   border-left: 2px solid var(--amber);
 }
 
-/* Stamp stack visual */
+/* Wanderkind official stamp */
 .stamp-stack {
   position: relative;
   height: 380px;
@@ -672,85 +669,19 @@ nav {
   align-items: center;
   justify-content: center;
 }
-.stamp {
-  position: absolute;
-  border-radius: 50%;
+.wk-stamp-wrap {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  animation: stamp-float 6s ease-in-out infinite;
 }
-.stamp-1 {
-  width: 180px; height: 180px;
-  border: 2px solid rgba(200,118,42,0.3);
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) rotate(-12deg);
-  background: rgba(200,118,42,0.04);
+@keyframes stamp-float {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%       { transform: translateY(-10px) rotate(-4deg); }
 }
-.stamp-2 {
-  width: 140px; height: 140px;
-  border: 1.5px solid rgba(201,168,76,0.25);
-  top: 30%; left: 60%;
-  transform: translate(-50%, -50%) rotate(8deg);
-  background: rgba(201,168,76,0.04);
-}
-.stamp-3 {
-  width: 120px; height: 120px;
-  border: 1.5px solid rgba(200,118,42,0.2);
-  top: 65%; left: 35%;
-  transform: translate(-50%, -50%) rotate(-5deg);
-  background: rgba(200,118,42,0.03);
-}
-.stamp-inner {
-  width: calc(100% - 12px);
-  height: calc(100% - 12px);
-  border: 0.5px solid rgba(200,118,42,0.15);
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-.stamp-title {
-  font-family: 'Courier New', monospace;
-  font-size: 8px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.stamp-icon {
-  color: var(--amber);
-}
-.stamp-year {
-  font-weight: 900;
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  color: var(--ink);
-}
-.stamp-location {
-  font-family: 'Courier New', monospace;
-  font-size: 7px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-}
-/* Large decorative background circle */
-.stamp-bg-circle {
-  position: absolute;
-  width: 280px; height: 280px;
-  border: 0.5px solid rgba(200,118,42,0.08);
-  border-radius: 50%;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-}
-.stamp-bg-circle-2 {
-  position: absolute;
-  width: 360px; height: 360px;
-  border: 0.5px solid rgba(200,118,42,0.05);
-  border-radius: 50%;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+.wk-stamp-wrap svg {
+  filter: drop-shadow(0 8px 32px rgba(200,118,42,0.18)) drop-shadow(0 2px 8px rgba(200,118,42,0.10));
 }
 
 /* ── PILLARS (FEATURES) ─────────────────────────── */
@@ -1070,18 +1001,18 @@ footer {
 }
 .footer-left {
   font-family: 'Courier New', monospace;
-  font-size: 9px;
-  letter-spacing: 0.22em;
+  font-size: 11px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold-muted);
-  opacity: 0.7;
+  opacity: 0.8;
   line-height: 2;
 }
 .footer-center {}
 .footer-logo {
   font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 0.12em;
+  font-size: 20px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--gold);
   text-align: center;
@@ -1089,22 +1020,22 @@ footer {
 }
 .footer-sub {
   font-family: 'Courier New', monospace;
-  font-size: 8px;
-  letter-spacing: 0.25em;
+  font-size: 10px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--gold-muted);
-  opacity: 0.5;
+  opacity: 0.75;
   text-align: center;
-  margin-top: 4px;
+  margin-top: 5px;
   display: block;
 }
 .footer-right {
   font-family: 'Courier New', monospace;
-  font-size: 9px;
-  letter-spacing: 0.22em;
+  font-size: 11px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold-muted);
-  opacity: 0.7;
+  opacity: 0.8;
   text-align: right;
   line-height: 2;
 }
@@ -1167,11 +1098,7 @@ footer {
   .manifesto-text h2 { font-size: clamp(30px, 7vw, 48px); }
 
   .stamp-stack { height: 280px; }
-  .stamp-1 { width: 150px; height: 150px; }
-  .stamp-2 { width: 116px; height: 116px; }
-  .stamp-3 { width: 96px; height: 96px; }
-  .stamp-bg-circle { width: 220px; height: 220px; }
-  .stamp-bg-circle-2 { width: 290px; height: 290px; }
+  .wk-stamp-wrap svg { width: 200px; height: 200px; }
 
   .pillars-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1455,33 +1382,74 @@ footer {
         </blockquote>
       </div>
 
-      <!-- Stamp visual -->
+      <!-- WANDERKIND Official Stamp -->
       <div class="stamp-stack fade-in fade-in-delay-2" aria-hidden="true">
-        <div class="stamp-bg-circle"></div>
-        <div class="stamp-bg-circle-2"></div>
+        <div class="wk-stamp-wrap">
+          <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Outer arc for WANDERKIND text -->
+              <path id="arcTop" d="M 22,130 A 108,108 0 0,1 238,130"/>
+              <!-- Lower arc for tagline -->
+              <path id="arcBot" d="M 44,158 A 90,90 0 0,0 216,158"/>
+            </defs>
 
-        <div class="stamp stamp-1">
-          <div class="stamp-inner">
-            <span class="stamp-title">Camino</span>
-            <svg class="stamp-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
-            <span class="stamp-year">MMXXVI</span>
-            <span class="stamp-location">Santiago de Compostela</span>
-          </div>
-        </div>
+            <!-- Outermost dashed ring -->
+            <circle cx="130" cy="130" r="122" stroke="#C8762A" stroke-width="1" stroke-dasharray="3.5 3" opacity="0.55"/>
+            <!-- Outer solid ring -->
+            <circle cx="130" cy="130" r="116" stroke="#C8762A" stroke-width="0.5" opacity="0.35"/>
+            <!-- Inner ring -->
+            <circle cx="130" cy="130" r="100" stroke="#C8762A" stroke-width="0.5" opacity="0.25"/>
+            <!-- Subtle fill -->
+            <circle cx="130" cy="130" r="114" fill="rgba(200,118,42,0.04)"/>
 
-        <div class="stamp stamp-2">
-          <div class="stamp-inner">
-            <svg class="stamp-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10L12 3L21 10V21H3Z"/><path d="M9 21V14H15V21"/></svg>
-            <span class="stamp-year" style="font-size:11px;">HERBERGE</span>
-            <span class="stamp-location">Pamplona</span>
-          </div>
-        </div>
+            <!-- WANDERKIND text along top arc -->
+            <text font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="14.5" font-weight="900" letter-spacing="7" fill="#C8762A" opacity="0.95" text-anchor="middle">
+              <textPath href="#arcTop" startOffset="50%">WANDERKIND</textPath>
+            </text>
 
-        <div class="stamp stamp-3">
-          <div class="stamp-inner">
-            <svg class="stamp-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21L12 3L21 21H3Z"/><line x1="12" y1="21" x2="12" y2="10"/></svg>
-            <span class="stamp-location" style="font-size:8px;">Camponaraya</span>
-          </div>
+            <!-- Tagline along bottom arc -->
+            <text font-family="'Courier New',monospace" font-size="7.5" letter-spacing="2.8" fill="#C8762A" opacity="0.55" text-anchor="middle">
+              <textPath href="#arcBot" startOffset="50%">SOVEREIGN TRAVEL IDENTITY</textPath>
+            </text>
+
+            <!-- Compass rose — centre -->
+            <!-- N/S/E/W cardinal points -->
+            <line x1="130" y1="80" x2="130" y2="95"  stroke="#C8762A" stroke-width="1.5" opacity="0.7"/>
+            <line x1="130" y1="165" x2="130" y2="180" stroke="#C8762A" stroke-width="1.5" opacity="0.7"/>
+            <line x1="80"  y1="130" x2="95"  y2="130" stroke="#C8762A" stroke-width="1.5" opacity="0.7"/>
+            <line x1="165" y1="130" x2="180" y2="130" stroke="#C8762A" stroke-width="1.5" opacity="0.7"/>
+            <!-- Diagonal minor points -->
+            <line x1="105" y1="105" x2="113" y2="113" stroke="#C8762A" stroke-width="0.8" opacity="0.4"/>
+            <line x1="147" y1="147" x2="155" y2="155" stroke="#C8762A" stroke-width="0.8" opacity="0.4"/>
+            <line x1="155" y1="105" x2="147" y2="113" stroke="#C8762A" stroke-width="0.8" opacity="0.4"/>
+            <line x1="113" y1="147" x2="105" y2="155" stroke="#C8762A" stroke-width="0.8" opacity="0.4"/>
+            <!-- North arrow (filled) -->
+            <polygon points="130,82 125.5,100 130,97 134.5,100" fill="#C8762A" opacity="0.9"/>
+            <!-- South arrow (outline) -->
+            <polygon points="130,178 125.5,160 130,163 134.5,160" fill="none" stroke="#C8762A" stroke-width="1" opacity="0.5"/>
+            <!-- E/W ticks -->
+            <polygon points="82,130 100,125.5 97,130 100,134.5"  fill="none" stroke="#C8762A" stroke-width="1" opacity="0.5"/>
+            <polygon points="178,130 160,125.5 163,130 160,134.5" fill="none" stroke="#C8762A" stroke-width="1" opacity="0.5"/>
+            <!-- Centre dot -->
+            <circle cx="130" cy="130" r="4" fill="#C8762A" opacity="0.8"/>
+            <circle cx="130" cy="130" r="8" fill="none" stroke="#C8762A" stroke-width="0.8" opacity="0.35"/>
+
+            <!-- N label -->
+            <text x="130" y="76" text-anchor="middle" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="0.05em" fill="#C8762A" opacity="0.8">N</text>
+
+            <!-- EST. MMXXVI below compass -->
+            <text x="130" y="153" text-anchor="middle" font-family="'Courier New',monospace" font-size="8.5" letter-spacing="3.5" fill="#C8762A" opacity="0.65">EST. MMXXVI</text>
+
+            <!-- Decorative horizontal rules flanking EST -->
+            <line x1="72" y1="149" x2="104" y2="149" stroke="#C8762A" stroke-width="0.5" opacity="0.3"/>
+            <line x1="156" y1="149" x2="188" y2="149" stroke="#C8762A" stroke-width="0.5" opacity="0.3"/>
+
+            <!-- Four corner dots on outer ring -->
+            <circle cx="130" cy="9"   r="2" fill="#C8762A" opacity="0.5"/>
+            <circle cx="130" cy="251" r="2" fill="#C8762A" opacity="0.5"/>
+            <circle cx="9"   cy="130" r="2" fill="#C8762A" opacity="0.5"/>
+            <circle cx="251" cy="130" r="2" fill="#C8762A" opacity="0.5"/>
+          </svg>
         </div>
       </div>
 
@@ -1557,7 +1525,7 @@ footer {
       <div class="voice-card fade-in">
         <p class="voice-quote">Walking to Mary's shrine is how I pray. I don't need an app that turns my pilgrimage into a fitness challenge.</p>
         <div class="voice-attribution">
-          <span class="voice-name">Margarethe, 58</span>
+          <span class="voice-name">Luise, 48</span>
           <span class="voice-type">Traditional Walker &middot; Altötting</span>
         </div>
       </div>
@@ -1565,7 +1533,7 @@ footer {
       <div class="voice-card fade-in fade-in-delay-1">
         <p class="voice-quote">The Wanderkind Pass is my credential. It needs to feel official, dignified, real. Not like a loyalty card for a coffee shop.</p>
         <div class="voice-attribution">
-          <span class="voice-name">Lukas, 21</span>
+          <span class="voice-name">Jonas, 23</span>
           <span class="voice-type">Zimmermann &middot; Wanderschaft</span>
         </div>
       </div>
@@ -1573,7 +1541,7 @@ footer {
       <div class="voice-card fade-in fade-in-delay-2">
         <p class="voice-quote">I carry almost nothing. I know the unmarked trails, the shepherd huts, the mountain passes crossable in November. Wanderkind is for people who deserve that knowledge.</p>
         <div class="voice-attribution">
-          <span class="voice-name">Marco, 30</span>
+          <span class="voice-name">Florian, 31</span>
           <span class="voice-type">Backpacker &middot; 8 years on the road</span>
         </div>
       </div>
@@ -1894,50 +1862,52 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   var ring = document.getElementById('cursorRing');
   if (!dot || !ring) return;
 
-  var mouseX = -100, mouseY = -100; /* start off-screen */
-  var ringX  = -100, ringY  = -100;
+  var mouseX = -200, mouseY = -200;
+  var ringX  = -200, ringY  = -200;
   var rafId  = null;
+  var inside = false;
 
-  /* Dot follows cursor instantly */
+  function setDot(x, y) {
+    dot.style.left = x + 'px';
+    dot.style.top  = y + 'px';
+  }
+  function setRing(x, y) {
+    ring.style.left = x + 'px';
+    ring.style.top  = y + 'px';
+  }
+
+  /* Dot snaps instantly; ring lerps (the lag) */
   document.addEventListener('mousemove', function(e) {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    dot.style.left = mouseX + 'px';
-    dot.style.top  = mouseY + 'px';
+    inside = true;
+    setDot(mouseX, mouseY);
     if (!rafId) rafId = requestAnimationFrame(animateRing);
-  });
+  }, { passive: true });
 
-  /* Ring lerps — this is the lag */
   function animateRing() {
     var dx = mouseX - ringX;
     var dy = mouseY - ringY;
-    ringX += dx * 0.10;
-    ringY += dy * 0.10;
-    ring.style.left = ringX + 'px';
-    ring.style.top  = ringY + 'px';
-
-    /* Keep looping as long as ring is still chasing */
-    if (Math.abs(dx) > 0.3 || Math.abs(dy) > 0.3) {
-      rafId = requestAnimationFrame(animateRing);
-    } else {
-      rafId = null;
-    }
+    ringX += dx * 0.12;
+    ringY += dy * 0.12;
+    setRing(ringX, ringY);
+    rafId = (Math.abs(dx) > 0.2 || Math.abs(dy) > 0.2)
+      ? requestAnimationFrame(animateRing)
+      : null;
   }
 
-  /* Hide cursors when mouse leaves window */
+  /* Park off-screen when mouse exits window */
   document.addEventListener('mouseleave', function() {
-    dot.style.opacity  = '0';
-    ring.style.opacity = '0';
-  });
-  document.addEventListener('mouseenter', function() {
-    dot.style.opacity  = '1';
-    ring.style.opacity = '1';
+    inside = false;
+    setDot(-200, -200);
+    setRing(-200, -200);
+    mouseX = ringX = -200; mouseY = ringY = -200;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
   });
 
-  /* Touch devices — hide cursor elements entirely */
+  /* Touch — remove cursor elements entirely */
   window.addEventListener('touchstart', function() {
-    dot.style.display  = 'none';
-    ring.style.display = 'none';
+    dot.remove(); ring.remove();
   }, { once: true, passive: true });
 })();
 </script>
