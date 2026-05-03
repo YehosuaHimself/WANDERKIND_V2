@@ -2009,16 +2009,6 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
     go();
   }, { passive: true });
 
-  /* Idle float */
-  var idleT = 0;
-  setInterval(function () {
-    if (!isOver && Math.abs(tX) < 0.1 && Math.abs(tY) < 0.1) {
-      idleT += 0.018;
-      tX = Math.sin(idleT * 0.6) * 3;
-      tY = Math.sin(idleT * 0.38) * 2;
-      go();
-    } else if (!isOver) { idleT = 0; }
-  }, 50);
 })();
 
 /* ── Ticker setup ── */
