@@ -13,6 +13,7 @@
 
 <!-- ── FAVICON ──────────────────────────────────────────────────────────── -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4.5' fill='%23FAFAF5'/%3E%3Ccircle cx='16' cy='16' r='13.5' fill='none' stroke='%23E8DFD0' stroke-width='.5' opacity='.7'/%3E%3Ccircle cx='16' cy='16' r='10.5' fill='none' stroke='%23E8DFD0' stroke-width='.4' opacity='.4'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Helvetica Neue%2CArial%2Csans-serif' font-size='21' font-weight='900' fill='%23C8762A' letter-spacing='-0.8'%3EW%3C%2Ftext%3E%3C%2Fsvg%3E">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=30&auto=format&fm=webp&fit=crop" fetchpriority="high">
 <link rel="canonical" href="https://wanderkind.love">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Wanderkind Embassy">
@@ -128,7 +129,7 @@ html { scrollbar-width: auto; scrollbar-color: var(--gold) transparent; }
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior replaced by Lenis */
   font-size: 16px;
 }
 
@@ -209,7 +210,7 @@ nav {
   position: relative;
   overflow: hidden;
   padding: 100px 40px 80px;
-  background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85&auto=format&fit=crop');
+  background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=30&auto=format&fm=webp&fit=crop');
   background-size: cover;
   background-position: center 40%;
   background-repeat: no-repeat;
@@ -935,7 +936,7 @@ nav {
 
 .pillars-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 2px;
 }
 .pillar {
@@ -1278,7 +1279,7 @@ footer {
 
 /* --- Tablet landscape (≤1100px) --- */
 @media (max-width: 1100px) {
-  .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+  .pillars-grid { grid-template-columns: repeat(3, 1fr); }
   .voices-grid {
     grid-template-columns: 1fr;
     max-width: 560px;
@@ -1340,7 +1341,7 @@ footer {
     padding: 72px 16px 64px;
     padding-top: max(72px, calc(60px + env(safe-area-inset-top)));
     padding-bottom: max(64px, calc(48px + env(safe-area-inset-bottom)));
-    background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=25&auto=format&fm=webp&fit=crop');
   }
   .hero-text h1 { font-size: clamp(40px, 13vw, 60px); }
   .hero-tagline { font-size: 16px; }
@@ -1423,7 +1424,9 @@ footer {
   opacity: 0.038;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 180px 180px;
-  animation: wk-grain 0.45s steps(1) infinite;
+  animation: wk-grain 8s steps(8) infinite;
+  will-change: background-position;
+  transform: translateZ(0);
 }
 @keyframes wk-grain {
   0%   { background-position:   0%   0%; }
@@ -1467,18 +1470,21 @@ footer {
   top: -220px; left: -120px;
   background: radial-gradient(circle, rgba(200,118,42,0.06) 0%, transparent 65%);
   animation: orb1 22s ease-in-out infinite;
+  will-change: transform;
 }
 .hero-orb-2 {
   width: 540px; height: 540px;
   bottom: -160px; right: -80px;
   background: radial-gradient(circle, rgba(201,168,76,0.045) 0%, transparent 65%);
   animation: orb2 28s ease-in-out infinite;
+  will-change: transform;
 }
 .hero-orb-3 {
   width: 360px; height: 360px;
   top: 30%; right: 30%;
   background: radial-gradient(circle, rgba(200,118,42,0.032) 0%, transparent 65%);
   animation: orb3 18s ease-in-out infinite;
+  will-change: transform;
 }
 @keyframes orb1 {
   0%,100% { transform: translate(0,0) scale(1); }
@@ -1970,7 +1976,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
 <section class="pillars">
   <div class="pillars-inner">
     <div class="pillars-header fade-in">
-      <span class="eyebrow">— Four Pillars</span>
+      <span class="eyebrow">— Five Pillars</span>
       <h2>The Foundation<br>of Every Journey</h2>
     </div>
     <div class="pillars-grid">
@@ -2009,6 +2015,15 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
         </div>
         <h3 class="pillar-title">Hosting</h3>
         <p class="pillar-body">An open door anywhere. A network of Wanderkinder who offer beds, meals, and a floor to sleep on — because they remember when a stranger did the same for them. Community without commerce.</p>
+      </div>
+
+      <div class="pillar fade-in fade-in-delay-4">
+        <div class="pillar-number">05 &middot; Community</div>
+        <div class="pillar-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 11v6m-3-3h6" opacity=".6"/></svg>
+        </div>
+        <h3 class="pillar-title">Community</h3>
+        <p class="pillar-body">A living network of Wanderkinder across every continent. Share routes, vouch for hosts, find fellow travellers, and step into a culture that existed long before the internet — now sovereign and connected.</p>
       </div>
 
     </div>
@@ -2299,7 +2314,11 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     var target = document.querySelector(this.getAttribute('href'));
     if (target) {
       e.preventDefault();
+      if (window.__lenis) {
+      window.__lenis.scrollTo(target, { offset: 0, duration: 1.2 });
+    } else {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     }
   });
 });
@@ -2547,6 +2566,25 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
       }, 1100);
     }, 320);
   });
+})();
+
+/* ── Lenis smooth scroll ─────────────────────────────────────────────── */
+(function () {
+  var s = document.createElement('script');
+  s.src = 'https://unpkg.com/lenis@1.1.14/dist/lenis.min.js';
+  s.onload = function () {
+    var lenis = new Lenis({
+      duration: 1.25,
+      easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      smoothWheel: true,
+      syncTouch: false
+    });
+    window.__lenis = lenis;
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    lenis.on('scroll', function () { window.dispatchEvent(new Event('scroll')); });
+  };
+  document.head.appendChild(s);
 })();
 
 /* ── Social counter — time-based growth + localStorage momentum ─────── */
