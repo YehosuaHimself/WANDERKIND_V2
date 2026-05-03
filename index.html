@@ -2003,7 +2003,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
       </div>
 
       <div class="pillar fade-in fade-in-delay-3">
-        <div class="pillar-number">04 &middot; Community</div>
+        <div class="pillar-number">04 &middot; Hosting</div>
         <div class="pillar-icon" aria-hidden="true">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10L12 3L21 10V21H3Z"/><path d="M9 21V14H15V21"/></svg>
         </div>
@@ -2019,7 +2019,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
 <section class="voices">
   <div class="voices-inner">
     <div class="voices-header fade-in">
-      <span class="eyebrow">— Every Wanderkind</span>
+      <span class="eyebrow">— Community</span>
       <h2>One Pass.<br>Many Roads.</h2>
     </div>
     <div class="voices-grid">
@@ -2444,10 +2444,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     if (heroText) heroText.style.transform = 'translateY(' + (sy * 0.22) + 'px)';
     if (scrollInd) scrollInd.style.opacity = Math.max(0, 1 - sy / 160);
 
-    if (showcase && sy + wh_win > tops.manifesto) {
-      var rel = sy - tops.manifesto + wh_win;
-      showcase.style.transform = 'translateY(' + (rel * -0.10) + 'px)';
-    }
+        /* pass-showcase is fully static */
 
     if (ph && sy + wh_win > tops.pillars) {
       var rel = sy - tops.pillars + wh_win;
