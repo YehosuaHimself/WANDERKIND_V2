@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="5" fill="#060a15"/>
+  <!-- Hexagon outline -->
+  <path d="M16 2.5L28.5 9.75v12.5L16 29.5 3.5 22.25V9.75Z"
+        fill="none" stroke="#c9a84c" stroke-width="1.3"/>
+  <!-- W mark -->
+  <path d="M8.5 11l3 10 4.5-5.5 4.5 5.5 3-10"
+        fill="none" stroke="#c9a84c" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
