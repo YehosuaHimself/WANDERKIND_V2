@@ -37,11 +37,13 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ══ CURSOR KILL ══════════════════════════════════════════════════════
-   Two layers: CSS (catches static rules) + JS injection (catches UA
-   stylesheet + dynamic additions). Belt AND suspenders.
+   Transparent 1×1 SVG beats cursor:none in Safari/Mac edge cases.
+   Every element inherits from html so no override fights.
    ═══════════════════════════════════════════════════════════════════ */
-html { cursor: none !important; }
-*, *::before, *::after { cursor: none !important; }
+html {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E") 0 0, none !important;
+}
+*, *::before, *::after { cursor: inherit !important; }
 
 /* ── GOLD SCROLLBAR ─────────────────────────────── */
 ::-webkit-scrollbar          { width: 12px; }
@@ -69,34 +71,33 @@ html { scrollbar-width: auto; scrollbar-color: var(--gold) transparent; }
 
 /* ── CUSTOM CURSOR ─────────────────────────────────────────────────────
    Dark brown square (dot) + larger lagging dark brown square (ring).
-   Visible on every background via a hairline cream shadow.
-   No border-radius. No other shape ever. No other colour ever.
+   NEVER use filter on position:fixed — it breaks viewport anchoring.
+   Position via transform:translate() only — no left/top animation.
    ──────────────────────────────────────────────────────────────────── */
 .cursor-dot {
   position: fixed;
-  left: -200px; top: -200px;
+  top: 0; left: 0;                        /* anchor point — never changed */
   width: 9px; height: 9px;
-  background: #4A1F08;
-  border-radius: 0;
+  background: #5C2A0F;
+  border-radius: 0;                        /* square — always */
   pointer-events: none;
   z-index: 2147483647;
-  transform: translate(-50%, -50%);
-  /* Hairline glow so it reads on dark navy backgrounds */
-  filter: drop-shadow(0 0 3px rgba(243,237,224,0.22));
-  will-change: left, top;
+  transform: translate(-9999px, -9999px); /* start off-screen */
+  will-change: transform;
+  /* box-shadow for visibility on dark navy — doesn't break positioning */
+  box-shadow: 0 0 0 0.5px rgba(243,237,224,0.12);
 }
 .cursor-ring {
   position: fixed;
-  left: -200px; top: -200px;
-  width: 32px; height: 32px;
-  border: 2px solid #4A1F08;
+  top: 0; left: 0;                        /* anchor point — never changed */
+  width: 34px; height: 34px;
+  border: 2px solid #5C2A0F;
   background: transparent;
-  border-radius: 0;
+  border-radius: 0;                        /* square — always */
   pointer-events: none;
   z-index: 2147483646;
-  transform: translate(-50%, -50%);
-  filter: drop-shadow(0 0 3px rgba(243,237,224,0.18));
-  will-change: left, top;
+  transform: translate(-9999px, -9999px); /* start off-screen */
+  will-change: transform;
 }
 
 html {
@@ -1843,61 +1844,73 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   });
 });
 
-/* ══ CURSOR KILL (JS layer) ══════════════════════════════════════════
-   Appended LAST in <head> equivalent — overrides UA stylesheet rules
-   for input/textarea/button that CSS * selector sometimes misses.
-   ═══════════════════════════════════════════════════════════════════ */
+/* ══ CURSOR KILL — JS layer (appended last, wins UA stylesheet) ═════ */
 (function () {
   var k = document.createElement('style');
-  k.id = 'wk-cursor-kill';
   k.textContent =
-    'html,*,*::before,*::after{cursor:none!important}' +
-    'input,textarea,button,a,select,label,[role=button]{cursor:none!important}' +
-    'input:hover,textarea:hover,button:hover,a:hover{cursor:none!important}' +
-    'input:focus,textarea:focus,button:focus{cursor:none!important}';
+    "html{cursor:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E\") 0 0,none!important}" +
+    '*,*::before,*::after{cursor:inherit!important}';
   document.head.appendChild(k);
-  /* Belt AND suspenders: forcibly set on document root */
-  document.documentElement.style.setProperty('cursor', 'none', 'important');
 })();
 
-/* ── Custom cursor — square dot + lagging square ring ── */
+/* ══ CUSTOM CURSOR — square dot + lagging square ring ═══════════════
+   Movement via transform:translate() ONLY — never left/top.
+   Reason: animating left/top on position:fixed breaks viewport
+   anchoring in Safari; filter:drop-shadow does the same.
+   ═══════════════════════════════════════════════════════════════════ */
 (function () {
   var dot  = document.getElementById('cursorDot');
   var ring = document.getElementById('cursorRing');
   if (!dot || !ring) return;
 
-  var mX = -300, mY = -300;   /* mouse */
-  var rX = -300, rY = -300;   /* ring current */
+  /* Half-sizes for centring */
+  var dotH  = 4.5;   /* 9 / 2  */
+  var ringH = 17;    /* 34 / 2 */
+
+  var mX = -9999, mY = -9999;   /* mouse target */
+  var rX = -9999, rY = -9999;   /* ring current position */
   var raf = null;
 
-  /* Dot: instant */
+  function moveDot(x, y) {
+    dot.style.transform = 'translate(' + (x - dotH) + 'px,' + (y - dotH) + 'px)';
+  }
+  function moveRing(x, y) {
+    ring.style.transform = 'translate(' + (x - ringH) + 'px,' + (y - ringH) + 'px)';
+  }
+
+  /* Dot snaps to cursor instantly */
   document.addEventListener('mousemove', function (e) {
-    mX = e.clientX; mY = e.clientY;
-    dot.style.left = mX + 'px';
-    dot.style.top  = mY + 'px';
+    mX = e.clientX;
+    mY = e.clientY;
+    moveDot(mX, mY);
     if (!raf) raf = requestAnimationFrame(chase);
   }, { passive: true });
 
-  /* Ring: lerp chase */
+  /* Ring lerps behind the dot (the lag) */
   function chase() {
-    var dx = mX - rX, dy = mY - rY;
-    rX += dx * 0.12; rY += dy * 0.12;
-    ring.style.left = rX + 'px';
-    ring.style.top  = rY + 'px';
-    raf = (Math.abs(dx) > 0.2 || Math.abs(dy) > 0.2) ? requestAnimationFrame(chase) : null;
+    var dx = mX - rX;
+    var dy = mY - rY;
+    rX += dx * 0.13;
+    rY += dy * 0.13;
+    moveRing(rX, rY);
+    raf = (Math.abs(dx) > 0.15 || Math.abs(dy) > 0.15)
+      ? requestAnimationFrame(chase)
+      : null;
   }
 
-  /* Park off-screen on leave */
+  /* Park both squares far off-screen when mouse leaves window */
   document.addEventListener('mouseleave', function () {
-    mX = rX = -300; mY = rY = -300;
-    dot.style.left  = ring.style.left = '-300px';
-    dot.style.top   = ring.style.top  = '-300px';
+    mX = rX = -9999;
+    mY = rY = -9999;
+    moveDot(-9999, -9999);
+    moveRing(-9999, -9999);
     if (raf) { cancelAnimationFrame(raf); raf = null; }
   });
 
-  /* Touch: remove elements entirely */
+  /* Touch devices: remove elements so they don't ghost */
   window.addEventListener('touchstart', function () {
-    dot.remove(); ring.remove();
+    dot.remove();
+    ring.remove();
   }, { once: true, passive: true });
 })();
 
