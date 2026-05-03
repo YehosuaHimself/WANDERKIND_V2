@@ -1709,28 +1709,76 @@ footer {
   });
 })();
 
-/* ── Waitlist form ── */
+/* ── Waitlist form → Supabase ── */
 (function() {
-  var form = document.getElementById('waitlistForm');
+  var SUPABASE_URL     = 'https://gjzhwpzgvdpkflgjesmb.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdqemh3cHpndmRwa2ZsZ2plc21iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0Mzc3OTUsImV4cCI6MjA5MjAxMzc5NX0.oHaNuCWu3FpMml2QhTpO7vFGxbgBEGo0mjKj5OUU7nI';
+
+  var form   = document.getElementById('waitlistForm');
   var thanks = document.getElementById('waitlistThanks');
-  var input = document.getElementById('emailInput');
+  var input  = document.getElementById('emailInput');
+  var btn    = form && form.querySelector('.waitlist-btn');
   if (!form) return;
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    var email = input.value.trim();
-    if (!email || !email.includes('@')) {
-      input.style.borderColor = 'rgba(176,58,58,0.5)';
-      input.focus();
-      return;
-    }
-    /* Simulate submission */
+  function showThanks() {
     form.style.opacity = '0';
     form.style.transition = 'opacity 0.3s';
     setTimeout(function() {
       form.style.display = 'none';
       thanks.classList.add('visible');
     }, 300);
+  }
+
+  function setLoading(on) {
+    if (!btn) return;
+    btn.disabled = on;
+    btn.textContent = on ? 'Requesting…' : 'Request Access';
+    btn.style.opacity = on ? '0.7' : '';
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var email = input.value.trim();
+
+    /* Basic client-side validation */
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      input.style.borderColor = 'rgba(176,58,58,0.6)';
+      input.focus();
+      return;
+    }
+
+    setLoading(true);
+
+    fetch(SUPABASE_URL + '/rest/v1/waitlist', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':         SUPABASE_ANON_KEY,
+        'Authorization':  'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer':         'return=minimal'
+      },
+      body: JSON.stringify({ email: email, source: 'landing-page' })
+    })
+    .then(function(res) {
+      /* 201 = created  |  409 = duplicate email (already on list) — both are success */
+      if (res.ok || res.status === 409) {
+        showThanks();
+      } else {
+        /* Non-fatal: still show thank-you so UX isn't broken */
+        return res.text().then(function(body) {
+          console.warn('Waitlist insert status', res.status, body);
+          showThanks();
+        });
+      }
+    })
+    .catch(function(err) {
+      /* Network error — still show thank-you, log quietly */
+      console.warn('Waitlist fetch error:', err);
+      showThanks();
+    })
+    .finally(function() {
+      setLoading(false);
+    });
   });
 
   input.addEventListener('input', function() {
