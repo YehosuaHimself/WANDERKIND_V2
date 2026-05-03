@@ -2341,15 +2341,19 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   });
 });
 
-/* ══ CURSOR KILL — JS layer (3-layer nuclear option) ═════════════════
-   1. Appended stylesheet wins specificity ties (last declared wins)
-   2. Inline style on <html> via setProperty = highest author specificity
-   3. MutationObserver: if any script tries to restore cursor, we kill it
+/* ══ CURSOR KILL — JS layer (6-layer nuclear option) ═════════════════
+   1. Appended stylesheet — last declared, wins all specificity ties
+   2. Inline setProperty('important') on <html> — beats all author styles
+   3. MutationObserver — restores if anything removes our style tag
+   4. mouseover capture — re-kills on EVERY element the pointer enters
+   5. focus capture — handles browser-imposed cursor on inputs/textareas
+   6. visibilitychange — re-kills when tab regains focus after alt-tab
    ═══════════════════════════════════════════════════════════════════ */
 (function () {
   var SVG_NONE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E\") 0 0,none";
-
-  /* 1 — append a <style> as the LAST stylesheet (wins all specificity ties) */
+  function kill(el) {
+    try { if (el && el.style) el.style.setProperty('cursor', SVG_NONE, 'important'); } catch(e) {}
+  }
   var k = document.createElement('style');
   k.id = 'wk-cursor-kill';
   k.textContent =
@@ -2359,25 +2363,25 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     '*,*::before,*::after{' +
     'cursor:' + SVG_NONE + '!important}';
   document.head.appendChild(k);
-
-  /* 2 — inline style on <html> with !important via setProperty */
-  try {
-    document.documentElement.style.setProperty('cursor', SVG_NONE, 'important');
-    document.body.style.setProperty('cursor', SVG_NONE, 'important');
-  } catch(e) {}
-
-  /* 3 — MutationObserver: restore if anything removes/changes our style tag */
+  kill(document.documentElement);
+  kill(document.body);
   if (window.MutationObserver) {
     new MutationObserver(function(muts) {
       muts.forEach(function(m) {
-        if (m.removedNodes) {
-          m.removedNodes.forEach(function(n) {
-            if (n.id === 'wk-cursor-kill') document.head.appendChild(k);
-          });
-        }
+        if (m.removedNodes) m.removedNodes.forEach(function(n) {
+          if (n.id === 'wk-cursor-kill') document.head.appendChild(k);
+        });
       });
     }).observe(document.head, { childList: true });
   }
+  /* 4 — every element the pointer enters */
+  document.addEventListener('mouseover', function(e) { kill(e.target); }, { passive: true, capture: true });
+  /* 5 — focused inputs (browser may impose cursor:text) */
+  document.addEventListener('focus', function(e) { kill(e.target); }, { passive: true, capture: true });
+  /* 6 — tab regains focus after alt-tab */
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) { kill(document.documentElement); kill(document.body); }
+  });
 })();
 
 /* ══ CUSTOM CURSOR — square dot + lagging square ring ═══════════════
@@ -2433,13 +2437,14 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     ring.remove();
   }, { once: true, passive: true });
 
-  /* Periodically re-apply cursor:none to html in case anything resets it */
+    /* Heartbeat: re-apply every 400 ms — catches any UA reset */
+  var _svgNone = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E\") 0 0,none";
   setInterval(function () {
     try {
-      document.documentElement.style.setProperty('cursor',
-        "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E\") 0 0,none", 'important');
+      document.documentElement.style.setProperty('cursor', _svgNone, 'important');
+      document.body.style.setProperty('cursor', _svgNone, 'important');
     } catch(e) {}
-  }, 2000);
+  }, 400);
 })();
 
 /* ══ PARALLAX ════════════════════════════════════════════════════════
