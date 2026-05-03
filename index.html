@@ -36,6 +36,64 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── KILL NATIVE CURSOR EVERYWHERE — no exceptions ── */
+html, body, *, *::before, *::after,
+a, a:hover, a:active, a:focus,
+button, button:hover, button:focus,
+input, input:hover, input:focus,
+select, textarea, label,
+[role="button"], [tabindex] {
+  cursor: none !important;
+}
+
+/* ── GOLD SCROLLBAR ─────────────────────────────── */
+::-webkit-scrollbar          { width: 12px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  min-height: 120px;
+  border-radius: 0;
+  border: none;
+  box-shadow:
+    0 0 8px  rgba(201,168,76,0.70),
+    0 0 18px rgba(201,168,76,0.40),
+    0 0 32px rgba(201,168,76,0.20);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-soft);
+  box-shadow:
+    0 0 10px rgba(201,168,76,0.90),
+    0 0 24px rgba(201,168,76,0.55),
+    0 0 44px rgba(201,168,76,0.30);
+}
+::-webkit-scrollbar-corner   { background: transparent; }
+/* Firefox */
+html { scrollbar-width: auto; scrollbar-color: var(--gold) transparent; }
+
+/* ── CUSTOM CURSOR ELEMENTS ─────────────────────── */
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 9px; height: 9px;
+  background: #3D1A0A;
+  pointer-events: none;
+  z-index: 999999;
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+}
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 30px; height: 30px;
+  border: 1.5px solid #3D1A0A;
+  background: transparent;
+  pointer-events: none;
+  z-index: 999998;
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+  /* No border-radius — squares only */
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;
@@ -112,6 +170,27 @@ nav {
   position: relative;
   overflow: hidden;
   padding: 100px 40px 80px;
+  /* Cinematic Alps hero image */
+  background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center 40%;
+  background-repeat: no-repeat;
+}
+
+/* Cinematic overlay — left side darker for text legibility, right lets image breathe */
+.hero-img-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      105deg,
+      rgba(6,10,21,0.88)  0%,
+      rgba(8,14,31,0.78)  38%,
+      rgba(8,14,31,0.55)  62%,
+      rgba(6,10,21,0.72)  100%
+    );
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Ambient glow behind pass */
@@ -123,21 +202,23 @@ nav {
   transform: translateY(-50%);
   width: 520px;
   height: 520px;
-  background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, rgba(200,118,42,0.06) 35%, transparent 70%);
+  background: radial-gradient(circle, rgba(201,168,76,0.10) 0%, rgba(200,118,42,0.04) 35%, transparent 70%);
   pointer-events: none;
   border-radius: 50%;
+  z-index: 1;
 }
 
-/* Background grid */
+/* Subtle grid on top of image */
 .hero::after {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(201,168,76,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201,168,76,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(201,168,76,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.018) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
+  z-index: 1;
 }
 
 .hero-inner {
@@ -149,7 +230,7 @@ nav {
   gap: 80px;
   align-items: center;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .hero-text {}
@@ -230,7 +311,7 @@ nav {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  z-index: 1;
+  z-index: 2;
   opacity: 0.5;
   animation: scroll-bob 2.5s ease-in-out infinite;
 }
@@ -840,27 +921,27 @@ nav {
   color: var(--amber);
 }
 
-/* ── WAITLIST SECTION ──────────────────────────── */
+/* ── WAITLIST SECTION — creamy white ───────────── */
 .waitlist {
-  background: var(--dark-bg);
+  background: var(--parchment-2);  /* #FAFAF5 — creamy white */
   padding: 120px 40px;
   position: relative;
   overflow: hidden;
 }
 
-/* Decorative border lines */
+/* Decorative border lines — amber-tinted on light bg */
 .waitlist::before {
   content: '';
   position: absolute;
   top: 40px; left: 40px; right: 40px; bottom: 40px;
-  border: 0.5px solid rgba(201,168,76,0.08);
+  border: 0.5px solid rgba(200,118,42,0.15);
   pointer-events: none;
 }
 .waitlist::after {
   content: '';
   position: absolute;
   top: 48px; left: 48px; right: 48px; bottom: 48px;
-  border: 0.5px solid rgba(201,168,76,0.04);
+  border: 0.5px solid rgba(200,118,42,0.08);
   pointer-events: none;
 }
 
@@ -880,14 +961,14 @@ nav {
   font-size: clamp(34px, 4vw, 54px);
   letter-spacing: -0.025em;
   text-transform: uppercase;
-  color: var(--cream);
+  color: var(--ink);             /* dark ink on light bg */
   line-height: 0.92;
   margin-bottom: 20px;
 }
 .waitlist-sub {
   font-size: 16px;
   line-height: 1.7;
-  color: var(--cream-muted);
+  color: var(--ink-soft);        /* warm brown on parchment */
   margin-bottom: 48px;
 }
 
@@ -898,25 +979,25 @@ nav {
 }
 .waitlist-input {
   flex: 1;
-  background: rgba(201,168,76,0.06);
-  border: 0.5px solid rgba(201,168,76,0.2);
+  background: #ffffff;
+  border: 0.5px solid rgba(200,118,42,0.3);
   padding: 16px 20px;
   font-size: 15px;
-  color: var(--cream);
+  color: var(--ink);             /* dark text on white input */
   font-family: 'Courier New', monospace;
   letter-spacing: 0.06em;
   outline: none;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   min-width: 0;
 }
 .waitlist-input::placeholder {
-  color: var(--cream-muted);
-  opacity: 0.6;
+  color: var(--ink-muted);
+  opacity: 0.7;
 }
 .waitlist-input:focus {
-  border-color: rgba(200,118,42,0.5);
-  background: rgba(200,118,42,0.08);
-  box-shadow: 0 0 0 3px rgba(200,118,42,0.1);
+  border-color: var(--amber);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(200,118,42,0.12);
 }
 .waitlist-btn {
   background: var(--amber);
@@ -943,16 +1024,16 @@ nav {
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gold-muted);
-  opacity: 0.6;
+  color: var(--ink-muted);
+  opacity: 0.7;
 }
 
 /* Thank you state */
 .waitlist-thanks {
   display: none;
   padding: 24px;
-  border: 0.5px solid rgba(201,168,76,0.3);
-  background: rgba(201,168,76,0.05);
+  border: 0.5px solid rgba(200,118,42,0.3);
+  background: rgba(200,118,42,0.05);
 }
 .waitlist-thanks.visible {
   display: block;
@@ -962,7 +1043,7 @@ nav {
   font-size: 12px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--amber);
 }
 
 /* ── FOOTER ────────────────────────────────────── */
@@ -1154,11 +1235,12 @@ footer {
   .voice-quote { font-size: 15px; }
   .voice-quote::before { font-size: 38px; }
 
-  .waitlist h2 { font-size: clamp(30px, 9vw, 48px); }
-  .waitlist-sub { font-size: 14px; margin-bottom: 36px; }
+  .waitlist h2 { font-size: clamp(30px, 9vw, 48px); color: var(--ink); }
+  .waitlist-sub { font-size: 14px; margin-bottom: 36px; color: var(--ink-soft); }
   .waitlist-input {
     padding: 15px 16px;
     font-size: 16px; /* prevents iOS auto-zoom on input focus */
+    color: var(--ink);
   }
   .waitlist-btn { font-size: 12px; letter-spacing: 0.14em; }
   .waitlist::before, .waitlist::after { display: none; } /* border boxes cluttered on mobile */
@@ -1209,6 +1291,7 @@ footer {
 
 <!-- ── HERO ── -->
 <section class="hero" id="hero">
+  <div class="hero-img-overlay" aria-hidden="true"></div>
   <div class="hero-inner">
 
     <!-- LEFT: Text -->
@@ -1796,7 +1879,64 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     }
   });
 });
+
+/* ── Premium cursor — square dot + lagging square ring ── */
+(function() {
+  var dot  = document.getElementById('cursorDot');
+  var ring = document.getElementById('cursorRing');
+  if (!dot || !ring) return;
+
+  var mouseX = -100, mouseY = -100; /* start off-screen */
+  var ringX  = -100, ringY  = -100;
+  var rafId  = null;
+
+  /* Dot follows cursor instantly */
+  document.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top  = mouseY + 'px';
+    if (!rafId) rafId = requestAnimationFrame(animateRing);
+  });
+
+  /* Ring lerps — this is the lag */
+  function animateRing() {
+    var dx = mouseX - ringX;
+    var dy = mouseY - ringY;
+    ringX += dx * 0.10;
+    ringY += dy * 0.10;
+    ring.style.left = ringX + 'px';
+    ring.style.top  = ringY + 'px';
+
+    /* Keep looping as long as ring is still chasing */
+    if (Math.abs(dx) > 0.3 || Math.abs(dy) > 0.3) {
+      rafId = requestAnimationFrame(animateRing);
+    } else {
+      rafId = null;
+    }
+  }
+
+  /* Hide cursors when mouse leaves window */
+  document.addEventListener('mouseleave', function() {
+    dot.style.opacity  = '0';
+    ring.style.opacity = '0';
+  });
+  document.addEventListener('mouseenter', function() {
+    dot.style.opacity  = '1';
+    ring.style.opacity = '1';
+  });
+
+  /* Touch devices — hide cursor elements entirely */
+  window.addEventListener('touchstart', function() {
+    dot.style.display  = 'none';
+    ring.style.display = 'none';
+  }, { once: true, passive: true });
+})();
 </script>
+
+<!-- ── CURSOR ELEMENTS — always on top ── -->
+<div class="cursor-dot"  id="cursorDot"  aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 
 </body>
 </html>
