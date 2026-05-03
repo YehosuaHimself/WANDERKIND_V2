@@ -8,6 +8,28 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="Wanderkind — A sovereign travel identity for everyone who moves through the world with intention. Coming 2026.">
 <title>WANDERKIND — A Sovereign Travel Identity</title>
+
+<!-- ── FAVICON ──────────────────────────────────────────────────────────── -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23060a15'/%3E%3Cpath d='M16 2.5L28.5 9.75v12.5L16 29.5 3.5 22.25V9.75Z' fill='none' stroke='%23c9a84c' stroke-width='1.3'/%3E%3Cpath d='M8.5 11l3 10 4.5-5.5 4.5 5.5 3-10' fill='none' stroke='%23c9a84c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://wanderkind.love">
+<meta name="robots" content="index, follow">
+<meta name="author" content="Wanderkind Embassy">
+<!-- ── OPEN GRAPH ──────────────────────────────────────────────────────── -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wanderkind.love">
+<meta property="og:site_name" content="Wanderkind">
+<meta property="og:title" content="WANDERKIND — A Sovereign Travel Identity">
+<meta property="og:description" content="A sovereign travel identity for everyone who moves through the world with intention. Every road deserves a document equal to its depth. Coming 2026.">
+<meta property="og:image" content="https://wanderkind.love/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WANDERKIND — Every road deserves a document of its own.">
+<!-- ── TWITTER / X ─────────────────────────────────────────────────────── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WANDERKIND — A Sovereign Travel Identity">
+<meta name="twitter:description" content="A sovereign travel identity for everyone who moves through the world with intention. Every road deserves a document equal to its depth. Coming 2026.">
+<meta name="twitter:image" content="https://wanderkind.love/og-card.jpg">
 <style>
 /* ================================================================
    WANDERKIND · COMING SOON · MMXXVI
@@ -347,29 +369,38 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 20px 0;
+  gap: 20px;
+  padding: 0;
 }
 .pass-showcase__scene {
-  perspective: 1000px;
-  perspective-origin: 50% 40%;
+  perspective: 1200px;
+  perspective-origin: 50% 38%;
   width: 100%;
-  max-width: 300px;
+  max-width: 360px;
+  position: relative;
+}
+.pass-showcase__scene::before {
+  content: '';
+  position: absolute;
+  inset: -48px;
+  background: radial-gradient(ellipse at 50% 48%, rgba(200,118,42,0.12) 0%, transparent 62%);
+  pointer-events: none;
+  z-index: 0;
 }
 .pass-showcase__mini-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 12px;
   width: 100%;
-  max-width: 280px;
+  max-width: 360px;
 }
 .pass-showcase__mini-row .pass-card {
-  opacity: 0.75;
-  transition: opacity 0.2s, transform 0.2s;
+  opacity: 0.72;
+  transition: opacity 0.25s, transform 0.25s;
 }
 .pass-showcase__mini-row .pass-card:hover {
   opacity: 1;
-  transform: scale(1.03) translateY(-2px) !important;
+  transform: scale(1.04) translateY(-3px) !important;
 }
 .pass-showcase__label {
   font-family: 'Courier New', monospace;
@@ -639,7 +670,7 @@ nav {
 .manifesto {
   background: var(--parchment-2);
   color: var(--ink);
-  padding: 120px 40px;
+  padding: 140px 40px 160px;
   position: relative;
   overflow: hidden;
 }
@@ -647,70 +678,80 @@ nav {
   content: '';
   position: absolute;
   top: -1px; left: 0; right: 0;
-  height: 80px;
+  height: 100px;
   background: linear-gradient(180deg, var(--bg-deep) 0%, transparent 100%);
   pointer-events: none;
+  z-index: 1;
 }
-
+.manifesto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 52% 70% at 75% 52%, rgba(200,118,42,0.055) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 40% at 80% 80%, rgba(26,18,10,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
 .manifesto-inner {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
-
 .manifesto-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 60px;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
   align-items: center;
 }
 .manifesto-text {
   grid-column: 1;
-  justify-self: start;
-  width: 100%;
+  position: relative;
+  padding-left: 26px;
+}
+.manifesto-text::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--amber) 0%, rgba(200,118,42,0.12) 80%, transparent 100%);
+  border-radius: 2px;
 }
 .pass-showcase {
   grid-column: 2;
   justify-self: center;
+  width: 100%;
+  max-width: 380px;
 }
-
-.manifesto-text .eyebrow {
-  margin-bottom: 24px;
-  display: block;
-}
+.manifesto-text .eyebrow { margin-bottom: 28px; display: block; }
 .manifesto-text h2 {
   font-weight: 900;
-  font-size: clamp(34px, 4vw, 56px);
-  line-height: 0.92;
-  letter-spacing: -0.025em;
+  font-size: clamp(40px, 4.4vw, 64px);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
   color: var(--ink);
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 .manifesto-text h2 em {
   font-style: normal;
   color: var(--amber);
+  display: block;
+  margin-top: 4px;
 }
-.manifesto-body {
-  font-size: 17px;
-  line-height: 1.75;
-  color: var(--ink-soft);
-  max-width: 480px;
-}
-.manifesto-body strong {
-  color: var(--ink);
-}
-.manifesto-divider {
-  width: 48px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--amber), transparent);
-  margin: 28px 0;
-}
+.manifesto-body { font-size: 17px; line-height: 1.78; color: var(--ink-soft); max-width: 460px; }
+.manifesto-body strong { color: var(--ink); }
+.manifesto-divider { width: 56px; height: 1px; background: linear-gradient(90deg, var(--amber), transparent); margin: 30px 0; }
 .manifesto-quote {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 15.5px;
+  line-height: 1.72;
+  font-style: italic;
   color: var(--ink-soft);
-  padding-left: 18px;
+  padding: 16px 20px 16px 20px;
   border-left: 2px solid var(--amber);
+  background: rgba(200,118,42,0.045);
+  border-radius: 0 6px 6px 0;
+  max-width: 420px;
 }
 
 /* Pass showcase sheen overlay for 3D tilt */
@@ -1100,10 +1141,10 @@ footer {
     margin: 0 auto;
   }
   /* Collapse to 2-col: text | passes, drop empty 3rd col */
-  .manifesto-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-  }
+  .manifesto-grid { gap: 48px; }
+  .pass-showcase { max-width: 300px; }
+  .pass-showcase__scene { max-width: 300px; }
+  .pass-showcase__mini-row { max-width: 300px; }
   .manifesto-text { grid-column: 1; }
   .pass-showcase { grid-column: 2; }
   .pass-showcase__scene { max-width: 240px; }
@@ -1124,10 +1165,10 @@ footer {
 
   .manifesto, .pillars, .voices, .waitlist { padding: 80px 24px; }
   .manifesto::before { display: none; }
-  .manifesto-grid { grid-template-columns: 1fr; gap: 48px; }
-  .manifesto-text { grid-column: auto; }
-  .pass-showcase { grid-column: auto; justify-self: center; }
-  .manifesto-text h2 { font-size: clamp(30px, 7vw, 48px); }
+  .manifesto-grid { grid-template-columns: 1fr; gap: 56px; }
+  .manifesto-text { grid-column: auto; padding-left: 20px; }
+  .pass-showcase { grid-column: auto; justify-self: center; max-width: 300px; padding: 0; }
+  .manifesto-text h2 { font-size: clamp(32px, 7vw, 50px); }
 
   .pass-showcase { padding: 0; }
   .pass-showcase__scene { max-width: 260px; }
@@ -1511,7 +1552,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
         <span class="lr-wrap"><span class="lr-inner" data-lr-delay="900"><em>Your Door.</em></span></span>
       </h1>
       <p class="hero-tagline fade-in fade-in-delay-2">
-        A <strong>sovereign travel identity</strong> for everyone who moves through the world with intention. Not a pilgrim app. Not a hiking app. <strong>Something new.</strong>
+        A <strong>sovereign travel identity</strong> for everyone who moves through the world with intention. Not a tracker. Not a journal. <strong>Something new.</strong>
       </p>
       <div class="hero-cta fade-in fade-in-delay-3">
         <a href="#waitlist" class="btn-primary">
@@ -1539,7 +1580,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
       <div class="manifesto-text">
         <span class="eyebrow fade-in">— What is Wanderkind</span>
         <h2 class="fade-in fade-in-delay-1">
-          Not a pilgrim<br>app. Not a<br>hiking app.<br><em>Something new.</em>
+          Every road<br>deserves a<br>document of<br><em>its own.</em>
         </h2>
         <div class="manifesto-divider fade-in fade-in-delay-2"></div>
         <p class="manifesto-body fade-in fade-in-delay-2">
@@ -1767,7 +1808,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0"/><path d="m14.83 9.17-4.24 1.06-1.06 4.24 4.24-1.06 1.06-4.24z"/></svg>
         </div>
         <h3 class="pillar-title">Routes</h3>
-        <p class="pillar-body">Ancient pilgrimage roads, journeyman trade routes, secret mountain passes, festival circuits. Discover paths walked by Wanderkinder before you. Offline, always. Signal-free valleys included.</p>
+        <p class="pillar-body">Ancient walking roads, journeyman trade routes, secret mountain passes, festival circuits. Discover paths walked by Wanderkinder before you. Offline, always. Signal-free valleys included.</p>
       </div>
 
       <div class="pillar fade-in fade-in-delay-3">
@@ -1793,7 +1834,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
     <div class="voices-grid">
 
       <div class="voice-card fade-in">
-        <p class="voice-quote">Walking to Mary's shrine is how I pray. I don't need an app that turns my pilgrimage into a fitness challenge.</p>
+        <p class="voice-quote">Walking to Mary's shrine is how I pray. I don't need an app that turns my journey into a fitness challenge.</p>
         <div class="voice-attribution">
           <span class="voice-name">Luise, 48</span>
           <span class="voice-type">Traditional Walker &middot; Alt&ouml;tting</span>
@@ -1983,7 +2024,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
 /* ── Ticker setup ── */
 (function() {
   var items = [
-    'Backpacker', 'Zimmermann', 'Digital Nomad', 'Pilgrim', 'Scout', 'Wanderkind',
+    'Backpacker', 'Zimmermann', 'Digital Nomad', 'Wanderer', 'Scout', 'Wanderkind',
     'Mountaineer', 'Geselle', 'Host', 'Festival Lover', 'Work-and-Travel',
     'Philosopher', 'Guide', 'Nomad', 'Walker', 'Journeyman', 'Wanderkind'
   ];
