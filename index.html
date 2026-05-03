@@ -76,28 +76,29 @@ html { scrollbar-width: auto; scrollbar-color: var(--gold) transparent; }
    ──────────────────────────────────────────────────────────────────── */
 .cursor-dot {
   position: fixed;
-  top: 0; left: 0;                        /* anchor point — never changed */
+  top: 0; left: 0;
   width: 9px; height: 9px;
-  background: #5C2A0F;
-  border-radius: 0;                        /* square — always */
+  background: #7B3A14;
+  border-radius: 0;
   pointer-events: none;
   z-index: 2147483647;
-  transform: translate(-9999px, -9999px); /* start off-screen */
-  will-change: transform;
-  /* box-shadow for visibility on dark navy — doesn't break positioning */
-  box-shadow: 0 0 0 0.5px rgba(243,237,224,0.12);
+  transform: translate(-9999px, -9999px);
+  /* outline reads on dark navy; stays subtle on light parchment */
+  outline: 1.5px solid rgba(255,255,255,0.55);
+  outline-offset: 1px;
 }
 .cursor-ring {
   position: fixed;
-  top: 0; left: 0;                        /* anchor point — never changed */
+  top: 0; left: 0;
   width: 34px; height: 34px;
-  border: 2px solid #5C2A0F;
+  border: 2px solid #7B3A14;
   background: transparent;
-  border-radius: 0;                        /* square — always */
+  border-radius: 0;
   pointer-events: none;
   z-index: 2147483646;
-  transform: translate(-9999px, -9999px); /* start off-screen */
-  will-change: transform;
+  transform: translate(-9999px, -9999px);
+  outline: 1px solid rgba(255,255,255,0.3);
+  outline-offset: 1px;
 }
 
 html {
