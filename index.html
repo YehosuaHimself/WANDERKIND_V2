@@ -210,10 +210,21 @@ nav {
   position: relative;
   overflow: hidden;
   padding: 100px 40px 80px;
+  /* background in .hero-bg for GPU parallax */
+}
+
+/* Dedicated parallax layer — translateY only, zero repaint */
+.hero-bg {
+  position: absolute;
+  inset: -25% 0;
   background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=30&auto=format&fm=webp&fit=crop');
   background-size: cover;
   background-position: center 40%;
   background-repeat: no-repeat;
+  will-change: transform;
+  transform: translateZ(0);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .hero-img-overlay {
@@ -1341,8 +1352,8 @@ footer {
     padding: 72px 16px 64px;
     padding-top: max(72px, calc(60px + env(safe-area-inset-top)));
     padding-bottom: max(64px, calc(48px + env(safe-area-inset-bottom)));
-    background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=25&auto=format&fm=webp&fit=crop');
   }
+  .hero-bg { background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=25&auto=format&fm=webp&fit=crop'); }}
   .hero-text h1 { font-size: clamp(40px, 13vw, 60px); }
   .hero-tagline { font-size: 16px; }
   .hero-note { font-size: 9px; }
@@ -1630,6 +1641,12 @@ footer {
 .wk-counter-label { font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-muted); line-height: 1.4; }
 .wk-counter-rule { width: 18px; height: 0.5px; background: rgba(200,118,42,0.4); }
 
+/* ── PARALLAX TARGETS — GPU layers ──────────────────────────────────────── */
+.hero-text       { will-change: transform; }
+.pillars-header  { will-change: transform; }
+.voices-header   { will-change: transform; }
+.voices-grid     { will-change: transform; }
+
 /* ── ENHANCED HOVER EFFECTS ─────────────────────────────────────────────── */
 .btn-primary { will-change: transform; }
 .btn-primary:hover { box-shadow: 0 8px 40px rgba(200,118,42,0.38), 0 0 0 1px rgba(200,118,42,0.22); }
@@ -1669,6 +1686,7 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
 
 <!-- ── HERO ── -->
 <section class="hero" id="hero">
+  <div class="hero-bg" id="heroBg" aria-hidden="true"></div>
   <div class="hero-img-overlay" aria-hidden="true">
 
   <!-- Animated depth orbs -->
@@ -2425,63 +2443,45 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 })();
 
 /* ══ PARALLAX ════════════════════════════════════════════════════════
-   Disabled on touch-primary devices (mobile).
+   GPU-composited. Exposes window._wkParallax(sy) for Lenis directly.
    ═══════════════════════════════════════════════════════════════════ */
 (function () {
   if (window.matchMedia('(hover: none)').matches) return;
-
-  var hero      = document.querySelector('.hero');
+  var heroBg    = document.getElementById('heroBg');
   var heroText  = document.querySelector('.hero-text');
   var scrollInd = document.querySelector('.scroll-indicator');
-  var showcase  = document.querySelector('.pass-showcase');
   var ph        = document.querySelector('.pillars-header');
   var vh        = document.querySelector('.voices-header');
   var vg        = document.querySelector('.voices-grid');
   var wh_win    = window.innerHeight;
-
-  var tops = { manifesto: 0, pillars: 0, voices: 0 };
+  var tops = { pillars: 0, voices: 0 };
   function cacheTops() {
-    wh_win = window.innerHeight;
-    var sy = window.scrollY;
-    function t(el, ancestor) {
-      var a = ancestor || el;
-      return a.getBoundingClientRect().top + sy;
-    }
-    if (showcase) tops.manifesto = t(showcase, showcase.closest('.manifesto') || showcase);
-    if (ph)       tops.pillars   = t(ph,       ph.closest('.pillars')         || ph);
-    if (vh)       tops.voices    = t(vh,       vh.closest('.voices')          || vh);
+    wh_win = window.innerHeight; var sy = window.scrollY;
+    function t(el) { return el.getBoundingClientRect().top + sy; }
+    if (ph) tops.pillars = t(ph.closest('.pillars') || ph);
+    if (vh) tops.voices  = t(vh.closest('.voices')  || vh);
   }
   requestAnimationFrame(function () { requestAnimationFrame(cacheTops); });
   window.addEventListener('resize', cacheTops, { passive: true });
-
-  var ticking = false;
-  function tick() {
-    ticking = false;
-    var sy = window.scrollY;
-
-    if (hero) hero.style.backgroundPositionY = 'calc(40% + ' + (sy * 0.3) + 'px)';
-    if (heroText) heroText.style.transform = 'translateY(' + (sy * 0.22) + 'px)';
-    if (scrollInd) scrollInd.style.opacity = Math.max(0, 1 - sy / 160);
-
-        /* pass-showcase is fully static */
-
+  function tick(sy) {
+    if (heroBg)    heroBg.style.transform  = 'translateY(' + (sy * 0.18) + 'px)';
+    if (heroText)  heroText.style.transform = 'translateY(' + (sy * 0.22) + 'px)';
+    if (scrollInd) scrollInd.style.opacity  = Math.max(0, 1 - sy / 160);
     if (ph && sy + wh_win > tops.pillars) {
-      var rel = sy - tops.pillars + wh_win;
-      ph.style.transform = 'translateY(' + (rel * -0.07) + 'px)';
+      ph.style.transform = 'translateY(' + ((sy - tops.pillars + wh_win) * -0.07) + 'px)';
     }
-
     if (sy + wh_win > tops.voices) {
-      var rel = sy - tops.voices + wh_win;
-      if (vh) vh.style.transform = 'translateY(' + (rel * -0.09) + 'px)';
-      if (vg) vg.style.transform = 'translateY(' + (rel * -0.04) + 'px)';
+      var rv = sy - tops.voices + wh_win;
+      if (vh) vh.style.transform = 'translateY(' + (rv * -0.09) + 'px)';
+      if (vg) vg.style.transform = 'translateY(' + (rv * -0.04) + 'px)';
     }
   }
-
+  window._wkParallax = tick;
+  var ticking = false;
   window.addEventListener('scroll', function () {
-    if (!ticking) { ticking = true; requestAnimationFrame(tick); }
+    if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; tick(window.scrollY); }); }
   }, { passive: true });
-
-  tick();
+  tick(window.scrollY);
 })();
 
 
@@ -2574,15 +2574,18 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   s.src = 'https://unpkg.com/lenis@1.1.14/dist/lenis.min.js';
   s.onload = function () {
     var lenis = new Lenis({
-      duration: 1.25,
-      easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
-      smoothWheel: true,
-      syncTouch: false
+      duration: 1.15,
+      easing: function (t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
+      smoothWheel: true, wheelMultiplier: 1.0, syncTouch: false
     });
     window.__lenis = lenis;
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    var scrollEvt = new Event('scroll');
+    lenis.on('scroll', function (e) {
+      if (window._wkParallax) window._wkParallax(e.scroll);
+      window.dispatchEvent(scrollEvt);
+    });
+    function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
-    lenis.on('scroll', function () { window.dispatchEvent(new Event('scroll')); });
   };
   document.head.appendChild(s);
 })();
