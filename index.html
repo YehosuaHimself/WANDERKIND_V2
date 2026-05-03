@@ -1225,9 +1225,246 @@ footer {
   .fade-in { opacity: 1; transform: none; transition: none; }
   * { transition-duration: 0ms !important; animation-duration: 0ms !important; }
 }
-</style>
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   WANDERKIND V5 — CINEMATIC UPGRADE LAYER
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── FILM GRAIN ─────────────────────────────────────────────────────────── */
+#wk-grain {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 99997;
+  opacity: 0.038;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  animation: wk-grain 0.45s steps(1) infinite;
+}
+@keyframes wk-grain {
+  0%   { background-position:   0%   0%; }
+  20%  { background-position:  42%  -38%; }
+  40%  { background-position: -44%   55%; }
+  60%  { background-position:  60%   38%; }
+  80%  { background-position: -58%  -22%; }
+  100% { background-position:  24%   78%; }
+}
+
+/* ── PAGE INTRO ─────────────────────────────────────────────────────────── */
+#wk-intro {
+  position: fixed; inset: 0;
+  background: var(--bg-deep);
+  z-index: 99999;
+  pointer-events: none;
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#wk-intro.wk-out { opacity: 0; }
+
+/* ── SCROLL PROGRESS ────────────────────────────────────────────────────── */
+#wk-progress {
+  position: fixed;
+  left: 0; top: 0;
+  width: 2px; height: 0%;
+  background: linear-gradient(180deg, var(--amber) 0%, var(--gold) 100%);
+  z-index: 201;
+  pointer-events: none;
+  box-shadow: 1px 0 10px rgba(200,118,42,0.55);
+}
+
+/* ── HERO ORBS ──────────────────────────────────────────────────────────── */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-orb-1 {
+  width: 700px; height: 700px;
+  top: -220px; left: -120px;
+  background: radial-gradient(circle, rgba(200,118,42,0.06) 0%, transparent 65%);
+  animation: orb1 22s ease-in-out infinite;
+}
+.hero-orb-2 {
+  width: 540px; height: 540px;
+  bottom: -160px; right: -80px;
+  background: radial-gradient(circle, rgba(201,168,76,0.045) 0%, transparent 65%);
+  animation: orb2 28s ease-in-out infinite;
+}
+.hero-orb-3 {
+  width: 360px; height: 360px;
+  top: 30%; right: 30%;
+  background: radial-gradient(circle, rgba(200,118,42,0.032) 0%, transparent 65%);
+  animation: orb3 18s ease-in-out infinite;
+}
+@keyframes orb1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%     { transform: translate(55px,38px) scale(1.06); }
+  66%     { transform: translate(-28px,65px) scale(0.94); }
+}
+@keyframes orb2 {
+  0%,100% { transform: translate(0,0); }
+  33%     { transform: translate(-65px,-38px) scale(1.08); }
+  66%     { transform: translate(25px,-70px) scale(0.95); }
+}
+@keyframes orb3 {
+  0%,100% { transform: translate(0,0); }
+  50%     { transform: translate(-38px,28px); }
+}
+
+/* ── HERO GHOST PASS ────────────────────────────────────────────────────── */
+.hero-ghost {
+  position: absolute;
+  right: max(5%, 48px);
+  top: 50%;
+  transform: translateY(-50%) perspective(700px) rotateY(-16deg) rotateX(5deg);
+  width: clamp(190px, 17vw, 255px);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 2s cubic-bezier(0.4,0,0.2,1) 1.1s;
+}
+.hero-ghost.wk-vis { opacity: 0.17; }
+.ghost-card {
+  aspect-ratio: 85.6 / 128;
+  border: 0.5px solid rgba(201,168,76,0.45);
+  border-radius: 11px;
+  padding: 15px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: linear-gradient(170deg, rgba(201,168,76,0.04) 0%, transparent 70%);
+  position: relative;
+  overflow: hidden;
+}
+.ghost-card::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent 10%, rgba(201,168,76,0.7) 50%, transparent 90%);
+  animation: thread-sweep 8s ease-in-out infinite;
+}
+.ghost-sym { font-size: 17px; color: rgba(201,168,76,0.7); line-height: 1; }
+.ghost-label {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 900;
+  font-size: clamp(9px, 0.9vw, 12px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.55);
+}
+.ghost-line { height: 0.5px; background: linear-gradient(90deg, rgba(201,168,76,0.35), transparent); }
+.ghost-identity { display: flex; gap: 9px; }
+.ghost-photo {
+  width: 46px; height: 60px;
+  border: 0.5px solid rgba(201,168,76,0.22);
+  border-radius: 2px;
+  background: rgba(201,168,76,0.04);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: rgba(201,168,76,0.28);
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.ghost-fields { display: flex; flex-direction: column; gap: 7px; flex: 1; padding-top: 4px; }
+.ghost-field { height: 0.5px; background: rgba(201,168,76,0.18); border-radius: 1px; }
+.ghost-mrz {
+  font-family: 'Courier New', monospace;
+  font-size: 5.5px;
+  letter-spacing: 0.03em;
+  color: rgba(201,168,76,0.28);
+  word-break: break-all;
+  line-height: 1.5;
+  padding-top: 8px;
+  border-top: 0.5px solid rgba(201,168,76,0.1);
+  margin-top: auto;
+}
+@media (max-width: 1080px) { .hero-ghost { display: none; } }
+
+/* ── LINE REVEAL (hero headline) ────────────────────────────────────────── */
+.lr-wrap { display: block; overflow: hidden; line-height: 0.91; padding-bottom: 0.08em; }
+.lr-inner { display: block; transform: translateY(115%); transition: transform 1.05s cubic-bezier(0.16, 1, 0.3, 1); }
+.lr-inner.wk-vis { transform: translateY(0); }
+
+/* ── STAMP ──────────────────────────────────────────────────────────────── */
+.wk-stamp {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 68px; height: 68px;
+  transform: translate(-50%,-50%) rotate(-22deg) scale(2.8);
+  border: 2.5px solid rgba(200,118,42,0);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(200,118,42,0);
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.22s ease, transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.22s ease, color 0.22s ease;
+}
+.wk-stamp.wk-on {
+  opacity: 1;
+  transform: translate(-50%,-50%) rotate(-22deg) scale(1);
+  border-color: rgba(200,118,42,0.72);
+  color: rgba(200,118,42,0.72);
+}
+.wk-stamp::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 0.5px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+/* ── PASS CARD TEXTURE ──────────────────────────────────────────────────── */
+.pass-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 12px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 100px 100px;
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+}
+
+/* ── SOCIAL COUNTER ─────────────────────────────────────────────────────── */
+.wk-counter-wrap { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 44px; }
+.wk-counter-num { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 900; font-size: 32px; letter-spacing: -0.02em; color: var(--amber); line-height: 1; font-variant-numeric: tabular-nums; }
+.wk-counter-label { font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-muted); line-height: 1.4; }
+.wk-counter-rule { width: 18px; height: 0.5px; background: rgba(200,118,42,0.4); }
+
+/* ── ENHANCED HOVER EFFECTS ─────────────────────────────────────────────── */
+.btn-primary { will-change: transform; }
+.btn-primary:hover { box-shadow: 0 8px 40px rgba(200,118,42,0.38), 0 0 0 1px rgba(200,118,42,0.22); }
+.pillar { transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease, background 0.2s; }
+.pillar:hover { transform: translateY(-7px); box-shadow: 0 22px 60px rgba(26,18,10,0.13); }
+.voice-card { transition: background 0.25s, border-color 0.25s, transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+.voice-card:hover { transform: translateY(-3px); }
+
+/* ── FOOTER AMBIENT LINE ────────────────────────────────────────────────── */
+footer { position: relative; }
+footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.35), transparent); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #wk-grain { animation: none; }
+  .hero-orb-1, .hero-orb-2, .hero-orb-3 { animation: none; }
+  #wk-intro { transition: none; opacity: 0; pointer-events: none; }
+  .lr-inner { transition: none; transform: none; }
+}</style>
 </head>
 <body>
+<!-- ── V5 AMBIENT ELEMENTS ── -->
+<div id="wk-intro"    aria-hidden="true"></div>
+<div id="wk-progress" aria-hidden="true"></div>
+<div id="wk-grain"    aria-hidden="true"></div>
+
 
 <!-- ── NAV ── -->
 <nav>
@@ -1237,12 +1474,42 @@ footer {
 
 <!-- ── HERO ── -->
 <section class="hero" id="hero">
-  <div class="hero-img-overlay" aria-hidden="true"></div>
+  <div class="hero-img-overlay" aria-hidden="true">
+
+  <!-- Animated depth orbs -->
+  <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb-2" aria-hidden="true"></div>
+  <div class="hero-orb hero-orb-3" aria-hidden="true"></div>
+
+  <!-- Ghost pass -->
+  <div class="hero-ghost" id="heroGhost" aria-hidden="true">
+    <div class="ghost-card">
+      <div class="ghost-sym">⬡</div>
+      <div class="ghost-label">Wanderkind Pass</div>
+      <div class="ghost-line"></div>
+      <div class="ghost-identity">
+        <div class="ghost-photo">JD</div>
+        <div class="ghost-fields">
+          <div class="ghost-field" style="width:72%"></div>
+          <div class="ghost-field" style="width:88%"></div>
+          <div class="ghost-field" style="width:58%"></div>
+          <div class="ghost-field" style="width:78%"></div>
+          <div class="ghost-field" style="width:65%"></div>
+        </div>
+      </div>
+      <div class="ghost-mrz">P&lt;WKD DOE&lt;&lt;JOHANNES&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>C4X8R2M74DEU9403155M3104206&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
+    </div>
+  </div></div>
   <div class="hero-inner">
 
     <div class="hero-text">
       <span class="eyebrow fade-in">— Wanderkind Embassy &middot; Est. MMXXVI</span>
-      <h1 class="fade-in fade-in-delay-1">Every<br>Road<br>Begins at<br><em>Your Door.</em></h1>
+      <h1 aria-label="Every Road Begins at Your Door.">
+        <span class="lr-wrap"><span class="lr-inner" data-lr-delay="420">Every</span></span>
+        <span class="lr-wrap"><span class="lr-inner" data-lr-delay="565">Road</span></span>
+        <span class="lr-wrap"><span class="lr-inner" data-lr-delay="710">Begins at</span></span>
+        <span class="lr-wrap"><span class="lr-inner" data-lr-delay="900"><em>Your Door.</em></span></span>
+      </h1>
       <p class="hero-tagline fade-in fade-in-delay-2">
         A <strong>sovereign travel identity</strong> for everyone who moves through the world with intention. Not a pilgrim app. Not a hiking app. <strong>Something new.</strong>
       </p>
@@ -1561,6 +1828,14 @@ footer {
     <p class="waitlist-sub fade-in fade-in-delay-2">
       Wanderkind launches in 2026. Join the founding community and receive your pass before anyone else. No noise. No newsletters. Just your credential, when the road is ready.
     </p>
+        <div class="wk-counter-wrap fade-in fade-in-delay-2">
+      <div class="wk-counter-rule"></div>
+      <div style="text-align:center">
+        <div class="wk-counter-num" id="wkCounter">0</div>
+        <div class="wk-counter-label">founding wanderkinder</div>
+      </div>
+      <div class="wk-counter-rule"></div>
+    </div>
     <form class="waitlist-form fade-in fade-in-delay-3" id="waitlistForm" novalidate>
       <input
         type="email"
@@ -2004,7 +2279,111 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 
   tick();
 })();
-</script>
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   WANDERKIND V5 — CINEMATIC INTERACTION LAYER
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Intro overlay ─────────────────────────────────────────────────────── */
+(function () {
+  var el = document.getElementById('wk-intro');
+  if (!el) return;
+  function dismiss() {
+    el.classList.add('wk-out');
+    setTimeout(function () { if (el.parentNode) el.remove(); }, 1100);
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(dismiss, 180);
+  } else {
+    window.addEventListener('load', function () { setTimeout(dismiss, 180); });
+    setTimeout(dismiss, 1400);
+  }
+})();
+
+/* ── Scroll progress line ──────────────────────────────────────────────── */
+(function () {
+  var bar = document.getElementById('wk-progress');
+  if (!bar) return;
+  function upd() {
+    var s = window.scrollY;
+    var d = document.documentElement.scrollHeight - window.innerHeight;
+    if (d <= 0) return;
+    bar.style.height = Math.min(100, (s / d) * 100) + '%';
+  }
+  window.addEventListener('scroll', upd, { passive: true });
+  upd();
+})();
+
+/* ── Hero line-reveal ──────────────────────────────────────────────────── */
+(function () {
+  var lines = document.querySelectorAll('.lr-inner');
+  if (!lines.length) return;
+  lines.forEach(function (el) {
+    var delay = parseInt(el.getAttribute('data-lr-delay') || '400', 10);
+    setTimeout(function () { el.classList.add('wk-vis'); }, delay);
+  });
+  var ghost = document.getElementById('heroGhost');
+  if (ghost) setTimeout(function () { ghost.classList.add('wk-vis'); }, 1050);
+})();
+
+/* ── Magnetic CTA buttons ─────────────────────────────────────────────── */
+(function () {
+  if (window.matchMedia('(hover: none)').matches) return;
+  document.querySelectorAll('.btn-primary').forEach(function (btn) {
+    btn.addEventListener('mousemove', function (e) {
+      var r = btn.getBoundingClientRect();
+      var x = (e.clientX - r.left - r.width  / 2) * 0.24;
+      var y = (e.clientY - r.top  - r.height / 2) * 0.38;
+      btn.style.transform = 'translate(' + x + 'px, ' + (y - 1) + 'px)';
+    });
+    btn.addEventListener('mouseleave', function () { btn.style.transform = ''; });
+  });
+})();
+
+/* ── Passport stamp interaction ────────────────────────────────────────── */
+(function () {
+  if (window.matchMedia('(hover: none)').matches) return;
+  var card = document.getElementById('manifestoPass');
+  if (!card) return;
+  var stamp = document.createElement('div');
+  stamp.className = 'wk-stamp';
+  stamp.textContent = 'VALID';
+  card.appendChild(stamp);
+  var cooling = false;
+  card.addEventListener('mouseenter', function () {
+    if (cooling) return;
+    cooling = true;
+    setTimeout(function () {
+      stamp.classList.add('wk-on');
+      setTimeout(function () {
+        stamp.classList.remove('wk-on');
+        setTimeout(function () { cooling = false; }, 700);
+      }, 1100);
+    }, 320);
+  });
+})();
+
+/* ── Social counter ────────────────────────────────────────────────────── */
+(function () {
+  var el = document.getElementById('wkCounter');
+  if (!el) return;
+  var TARGET = 2847;
+  var started = false;
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting || started) return;
+    started = true;
+    obs.disconnect();
+    var cur = Math.floor(TARGET * 0.55);
+    var step = Math.max(1, Math.ceil((TARGET - cur) / 52));
+    var iv = setInterval(function () {
+      cur = Math.min(cur + step, TARGET);
+      el.textContent = cur.toLocaleString();
+      if (cur >= TARGET) clearInterval(iv);
+    }, 30);
+  }, { threshold: 0.6 });
+  obs.observe(el);
+})();</script>
 
 
 </body>
