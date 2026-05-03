@@ -36,20 +36,12 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── KILL NATIVE CURSOR — absolute, no exceptions, no overrides ── */
-*,
-*::before,
-*::after,
-html,
-body,
-a, a:link, a:visited, a:hover, a:active, a:focus,
-button, button:hover, button:active, button:focus,
-input, input:hover, input:focus, input:active,
-select, select:hover, textarea, textarea:hover,
-label, [role="button"], [tabindex],
-[class], [id] {
-  cursor: none !important;
-}
+/* ══ CURSOR KILL ══════════════════════════════════════════════════════
+   Two layers: CSS (catches static rules) + JS injection (catches UA
+   stylesheet + dynamic additions). Belt AND suspenders.
+   ═══════════════════════════════════════════════════════════════════ */
+html { cursor: none !important; }
+*, *::before, *::after { cursor: none !important; }
 
 /* ── GOLD SCROLLBAR ─────────────────────────────── */
 ::-webkit-scrollbar          { width: 12px; }
@@ -75,31 +67,36 @@ label, [role="button"], [tabindex],
 /* Firefox */
 html { scrollbar-width: auto; scrollbar-color: var(--gold) transparent; }
 
-/* ── CUSTOM CURSOR — square dot + lagging square ring ─────────────────
-   Dark brown, hard right-angle corners, never any other cursor ever.
+/* ── CUSTOM CURSOR ─────────────────────────────────────────────────────
+   Dark brown square (dot) + larger lagging dark brown square (ring).
+   Visible on every background via a hairline cream shadow.
+   No border-radius. No other shape ever. No other colour ever.
    ──────────────────────────────────────────────────────────────────── */
 .cursor-dot {
   position: fixed;
-  top: -100px; left: -100px;
+  left: -200px; top: -200px;
   width: 9px; height: 9px;
-  background: #5C2A12;
+  background: #4A1F08;
   border-radius: 0;
   pointer-events: none;
   z-index: 2147483647;
   transform: translate(-50%, -50%);
-  will-change: transform, left, top;
+  /* Hairline glow so it reads on dark navy backgrounds */
+  filter: drop-shadow(0 0 3px rgba(243,237,224,0.22));
+  will-change: left, top;
 }
 .cursor-ring {
   position: fixed;
-  top: -100px; left: -100px;
-  width: 33px; height: 33px;
-  border: 2px solid #5C2A12;
+  left: -200px; top: -200px;
+  width: 32px; height: 32px;
+  border: 2px solid #4A1F08;
   background: transparent;
   border-radius: 0;
   pointer-events: none;
   z-index: 2147483646;
   transform: translate(-50%, -50%);
-  will-change: transform, left, top;
+  filter: drop-shadow(0 0 3px rgba(243,237,224,0.18));
+  will-change: left, top;
 }
 
 html {
@@ -341,7 +338,8 @@ nav {
 
 /* ── WANDERKIND PASS CARD ──────────────────────── */
 .pass-scene {
-  perspective: 1200px;
+  perspective: 900px;
+  perspective-origin: 50% 40%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -352,14 +350,13 @@ nav {
   height: 228px;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.12s ease-out;
-  /* Gold foil border via gradient */
+  /* JS controls transform — CSS transition only used for non-hover state */
   border-radius: 14px;
   box-shadow:
     0 0 0 1px rgba(201,168,76,0.35),
-    0 24px 80px rgba(0,0,0,0.7),
+    0 28px 90px rgba(0,0,0,0.75),
     0 8px 24px rgba(201,168,76,0.12);
-  will-change: transform;
+  will-change: transform, box-shadow;
 }
 
 /* Front face */
@@ -1633,121 +1630,111 @@ footer {
   }, 100);
 })();
 
-/* ── Pass 3D tilt effect ── */
-(function() {
-  var card = document.getElementById('passCard');
-  var sheen = document.getElementById('passSheen');
+/* ── Pass card — luxurious 3D tilt ─────────────────────────────────── */
+(function () {
+  var card  = document.getElementById('passCard');
+  var sheen = document.getElementById('passSheen') || (card && card.querySelector('.pass-sheen'));
   var scene = card && card.closest('.pass-scene');
-  if (!card) return;
-
-  var currentX = 0, currentY = 0;
-  var targetX = 0, targetY = 0;
-  var rafId = null;
+  var heroEl = document.getElementById('hero');
+  if (!card || !sheen) return;
 
   function lerp(a, b, t) { return a + (b - a) * t; }
 
-  function animate() {
-    currentX = lerp(currentX, targetX, 0.1);
-    currentY = lerp(currentY, targetY, 0.1);
+  var cX = 0, cY = 0, cS = 1;   /* current rotX / rotY / scale */
+  var tX = 0, tY = 0, tS = 1;   /* target */
+  var isOver = false;
+  var raf = null;
 
-    card.style.transform = 'rotateY(' + currentX + 'deg) rotateX(' + (-currentY) + 'deg)';
+  function go() { if (!raf) raf = requestAnimationFrame(frame); }
 
-    /* Dynamic box shadow based on tilt */
-    var shadowX = -currentX * 1.5;
-    var shadowY = currentY * 1.5;
+  function frame() {
+    var spd = isOver ? 0.06 : 0.08;
+    cX = lerp(cX, tX, spd);
+    cY = lerp(cY, tY, spd);
+    cS = lerp(cS, tS, spd);
+
+    card.style.transform =
+      'rotateY(' + cX + 'deg) rotateX(' + (-cY) + 'deg) scale(' + cS + ')';
+
+    /* Shadow: deep, directional, gold glow builds with angle */
+    var glow  = Math.sqrt(cX * cX + cY * cY);
+    var shX   = -cX * 2.8;
+    var shY   = cY  * 2.8 + 30;
     card.style.boxShadow =
-      '0 0 0 1px rgba(201,168,76,0.35), ' +
-      shadowX + 'px ' + (24 + shadowY) + 'px 80px rgba(0,0,0,0.7), ' +
-      '0 8px 24px rgba(201,168,76,0.12), ' +
-      '0 0 60px rgba(201,168,76,' + (Math.abs(currentX) * 0.004 + 0.03) + ')';
+      '0 0 0 1px rgba(201,168,76,' + (0.3 + glow * 0.015) + '),' +
+      shX + 'px ' + shY + 'px 120px rgba(0,0,0,0.85),' +
+      '0 0 ' + (40 + glow * 2) + 'px rgba(201,168,76,' + (glow * 0.005 + 0.04) + '),' +
+      '0 12px 40px rgba(201,168,76,' + (isOver ? 0.18 : 0.08) + ')';
 
-    /* Sheen follows tilt */
-    var sheenX = 50 + currentX * 2;
-    var sheenY = 50 - currentY * 2;
-    sheen.style.background = 'radial-gradient(circle at ' + sheenX + '% ' + sheenY + '%, rgba(255,255,255,0.06) 0%, transparent 60%)';
+    /* Sheen: a large sweeping light wash + a subtle counter-light */
+    var sX = 50 + cX * 4;
+    var sY = 50 - cY * 4;
+    sheen.style.background =
+      'radial-gradient(ellipse 130% 90% at ' + sX + '% ' + sY + '%, ' +
+        'rgba(255,255,255,' + (isOver ? 0.11 : 0.05) + ') 0%, transparent 60%),' +
+      'radial-gradient(ellipse 70% 50% at ' + (100 - sX) + '% ' + (100 - sY) + '%, ' +
+        'rgba(201,168,76,' + (isOver ? 0.09 : 0.02) + ') 0%, transparent 55%)';
 
-    if (Math.abs(currentX - targetX) > 0.01 || Math.abs(currentY - targetY) > 0.01) {
-      rafId = requestAnimationFrame(animate);
-    }
+    var done = Math.abs(cX-tX)<0.015 && Math.abs(cY-tY)<0.015 && Math.abs(cS-tS)<0.0005;
+    raf = done ? null : requestAnimationFrame(frame);
   }
 
-  function startAnimate() {
-    if (!rafId) { rafId = requestAnimationFrame(animate); }
-  }
-
-  document.addEventListener('mousemove', function(e) {
-    if (!scene) return;
-    var rect = scene.getBoundingClientRect();
-    var centerX = rect.left + rect.width / 2;
-    var centerY = rect.top + rect.height / 2;
-    var dx = (e.clientX - centerX) / (window.innerWidth / 2);
-    var dy = (e.clientY - centerY) / (window.innerHeight / 2);
-    targetX = dx * 16;
-    targetY = dy * 12;
-    rafId = null;
-    startAnimate();
+  /* ── Hover ── */
+  card.addEventListener('mouseenter', function () {
+    isOver = true; tS = 1.04; go();
+  });
+  card.addEventListener('mouseleave', function () {
+    isOver = false; tX = 0; tY = 0; tS = 1;
+    clearTimeout(uvTimer); card.classList.remove('uv-active');
+    go();
   });
 
-  document.addEventListener('mouseleave', function() {
-    targetX = 0;
-    targetY = 0;
-    startAnimate();
-  });
-
-  /* Touch tilt — only responds when hero is in view, avoids interfering with scroll */
-  var heroEl = document.getElementById('hero');
-  var touchActive = false;
-  card.addEventListener('touchstart', function() { touchActive = true; }, { passive: true });
-  card.addEventListener('touchend',   function() { touchActive = false; targetX = 0; targetY = 0; startAnimate(); }, { passive: true });
-  document.addEventListener('touchmove', function(e) {
-    if (!touchActive || !scene) return;
-    /* Only tilt when hero is visible */
-    if (heroEl) {
-      var hr = heroEl.getBoundingClientRect();
-      if (hr.bottom < 0 || hr.top > window.innerHeight) return;
+  /* ── Mouse move: precise tilt over card, gentle ambient elsewhere ── */
+  document.addEventListener('mousemove', function (e) {
+    if (isOver) {
+      var r  = card.getBoundingClientRect();
+      tX = ((e.clientX - r.left)  / r.width  - 0.5) * 32;
+      tY = ((e.clientY - r.top)   / r.height - 0.5) * 24;
+    } else if (scene) {
+      var r  = scene.getBoundingClientRect();
+      tX = ((e.clientX - r.left - r.width  / 2) / (window.innerWidth  / 2)) * 8;
+      tY = ((e.clientY - r.top  - r.height / 2) / (window.innerHeight / 2)) * 6;
+      tS = 1;
     }
-    var touch = e.touches[0];
-    var rect = scene.getBoundingClientRect();
-    var centerX = rect.left + rect.width / 2;
-    var centerY = rect.top + rect.height / 2;
-    var dx = (touch.clientX - centerX) / (window.innerWidth / 2);
-    var dy = (touch.clientY - centerY) / (window.innerHeight / 2);
-    /* Gentler tilt on touch */
-    targetX = Math.max(-12, Math.min(12, dx * 12));
-    targetY = Math.max(-10, Math.min(10, dy * 10));
-    rafId = null;
-    startAnimate();
+    go();
   }, { passive: true });
 
-  /* UV mode — long press on mouse AND touch */
-  var uvTimer = null;
-  function uvOn()  { uvTimer = setTimeout(function() { card.classList.add('uv-active'); }, 420); }
-  function uvOff() {
-    clearTimeout(uvTimer);
-    setTimeout(function() { card.classList.remove('uv-active'); }, 700);
-  }
-  card.addEventListener('mousedown',  uvOn);
-  card.addEventListener('mouseup',    uvOff);
-  card.addEventListener('mouseleave', function() { clearTimeout(uvTimer); card.classList.remove('uv-active'); });
-  card.addEventListener('touchstart', uvOn,  { passive: true });
-  card.addEventListener('touchend',   uvOff, { passive: true });
-  card.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') { card.classList.toggle('uv-active'); }
-  });
-
-  /* Small ambient idle float */
-  var idleTime = 0;
-  var idleInterval = setInterval(function() {
-    if (targetX === 0 && targetY === 0) {
-      idleTime += 0.025;
-      targetX = Math.sin(idleTime * 0.7) * 3;
-      targetY = Math.sin(idleTime * 0.5) * 2;
-      rafId = null;
-      startAnimate();
-    } else {
-      idleTime = 0;
-    }
+  /* ── Idle float when mouse inactive ── */
+  var idleT = 0;
+  setInterval(function () {
+    if (!isOver && Math.abs(tX) < 0.1 && Math.abs(tY) < 0.1) {
+      idleT += 0.022;
+      tX = Math.sin(idleT * 0.65) * 3.5;
+      tY = Math.sin(idleT * 0.42) * 2.5;
+      go();
+    } else if (!isOver) { idleT = 0; }
   }, 50);
+
+  /* ── UV easter egg ── */
+  var uvTimer = null;
+  card.addEventListener('mousedown',  function () { uvTimer = setTimeout(function () { card.classList.add('uv-active'); }, 420); });
+  card.addEventListener('mouseup',    function () { clearTimeout(uvTimer); setTimeout(function () { card.classList.remove('uv-active'); }, 700); });
+  card.addEventListener('touchstart', function () { uvTimer = setTimeout(function () { card.classList.add('uv-active'); }, 420); }, { passive: true });
+  card.addEventListener('touchend',   function () { clearTimeout(uvTimer); setTimeout(function () { card.classList.remove('uv-active'); }, 700); }, { passive: true });
+
+  /* ── Touch tilt ── */
+  var touchOn = false;
+  card.addEventListener('touchstart', function () { touchOn = true; }, { passive: true });
+  card.addEventListener('touchend',   function () { touchOn = false; tX = 0; tY = 0; go(); }, { passive: true });
+  document.addEventListener('touchmove', function (e) {
+    if (!touchOn || !scene) return;
+    if (heroEl) { var hr = heroEl.getBoundingClientRect(); if (hr.bottom < 0 || hr.top > window.innerHeight) return; }
+    var t  = e.touches[0];
+    var r  = card.getBoundingClientRect();
+    tX = Math.max(-16, Math.min(16, ((t.clientX - r.left) / r.width  - 0.5) * 22));
+    tY = Math.max(-13, Math.min(13, ((t.clientY - r.top)  / r.height - 0.5) * 17));
+    go();
+  }, { passive: true });
 })();
 
 /* ── Ticker setup ── */
@@ -1856,59 +1843,138 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
   });
 });
 
-/* ── Premium cursor — square dot + lagging square ring ── */
-(function() {
+/* ══ CURSOR KILL (JS layer) ══════════════════════════════════════════
+   Appended LAST in <head> equivalent — overrides UA stylesheet rules
+   for input/textarea/button that CSS * selector sometimes misses.
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  var k = document.createElement('style');
+  k.id = 'wk-cursor-kill';
+  k.textContent =
+    'html,*,*::before,*::after{cursor:none!important}' +
+    'input,textarea,button,a,select,label,[role=button]{cursor:none!important}' +
+    'input:hover,textarea:hover,button:hover,a:hover{cursor:none!important}' +
+    'input:focus,textarea:focus,button:focus{cursor:none!important}';
+  document.head.appendChild(k);
+  /* Belt AND suspenders: forcibly set on document root */
+  document.documentElement.style.setProperty('cursor', 'none', 'important');
+})();
+
+/* ── Custom cursor — square dot + lagging square ring ── */
+(function () {
   var dot  = document.getElementById('cursorDot');
   var ring = document.getElementById('cursorRing');
   if (!dot || !ring) return;
 
-  var mouseX = -200, mouseY = -200;
-  var ringX  = -200, ringY  = -200;
-  var rafId  = null;
-  var inside = false;
+  var mX = -300, mY = -300;   /* mouse */
+  var rX = -300, rY = -300;   /* ring current */
+  var raf = null;
 
-  function setDot(x, y) {
-    dot.style.left = x + 'px';
-    dot.style.top  = y + 'px';
-  }
-  function setRing(x, y) {
-    ring.style.left = x + 'px';
-    ring.style.top  = y + 'px';
-  }
-
-  /* Dot snaps instantly; ring lerps (the lag) */
-  document.addEventListener('mousemove', function(e) {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    inside = true;
-    setDot(mouseX, mouseY);
-    if (!rafId) rafId = requestAnimationFrame(animateRing);
+  /* Dot: instant */
+  document.addEventListener('mousemove', function (e) {
+    mX = e.clientX; mY = e.clientY;
+    dot.style.left = mX + 'px';
+    dot.style.top  = mY + 'px';
+    if (!raf) raf = requestAnimationFrame(chase);
   }, { passive: true });
 
-  function animateRing() {
-    var dx = mouseX - ringX;
-    var dy = mouseY - ringY;
-    ringX += dx * 0.12;
-    ringY += dy * 0.12;
-    setRing(ringX, ringY);
-    rafId = (Math.abs(dx) > 0.2 || Math.abs(dy) > 0.2)
-      ? requestAnimationFrame(animateRing)
-      : null;
+  /* Ring: lerp chase */
+  function chase() {
+    var dx = mX - rX, dy = mY - rY;
+    rX += dx * 0.12; rY += dy * 0.12;
+    ring.style.left = rX + 'px';
+    ring.style.top  = rY + 'px';
+    raf = (Math.abs(dx) > 0.2 || Math.abs(dy) > 0.2) ? requestAnimationFrame(chase) : null;
   }
 
-  /* Park off-screen when mouse exits window */
-  document.addEventListener('mouseleave', function() {
-    inside = false;
-    setDot(-200, -200);
-    setRing(-200, -200);
-    mouseX = ringX = -200; mouseY = ringY = -200;
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  /* Park off-screen on leave */
+  document.addEventListener('mouseleave', function () {
+    mX = rX = -300; mY = rY = -300;
+    dot.style.left  = ring.style.left = '-300px';
+    dot.style.top   = ring.style.top  = '-300px';
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
   });
 
-  /* Touch — remove cursor elements entirely */
-  window.addEventListener('touchstart', function() {
+  /* Touch: remove elements entirely */
+  window.addEventListener('touchstart', function () {
     dot.remove(); ring.remove();
   }, { once: true, passive: true });
+})();
+
+/* ══ PARALLAX ════════════════════════════════════════════════════════ */
+(function () {
+  var hero      = document.querySelector('.hero');
+  var heroText  = document.querySelector('.hero-text');
+  var heroCard  = document.querySelector('.pass-scene');
+  var scrollInd = document.querySelector('.scroll-indicator');
+  var stamp     = document.querySelector('.wk-stamp-wrap');
+  var ph        = document.querySelector('.pillars-header');
+  var vh        = document.querySelector('.voices-header');
+  var vg        = document.querySelector('.voices-grid');
+  var wh_win    = window.innerHeight;
+
+  /* Cache section tops (no reflow on scroll) */
+  var tops = { stamp: 0, pillars: 0, voices: 0 };
+  function cacheTops() {
+    wh_win = window.innerHeight;
+    var sy = window.scrollY;
+    function t(el, ancestor) {
+      var a = ancestor || el;
+      return a.getBoundingClientRect().top + sy;
+    }
+    if (stamp)  tops.stamp   = t(stamp,  stamp.closest('.manifesto')  || stamp);
+    if (ph)     tops.pillars = t(ph,     ph.closest('.pillars')        || ph);
+    if (vh)     tops.voices  = t(vh,     vh.closest('.voices')         || vh);
+  }
+  /* Two rAF frames after paint so layout is stable */
+  requestAnimationFrame(function () { requestAnimationFrame(cacheTops); });
+  window.addEventListener('resize', cacheTops, { passive: true });
+
+  var ticking = false;
+  function tick() {
+    ticking = false;
+    var sy = window.scrollY;
+
+    /* Hero: bg drifts at 30% scroll speed (creates depth) */
+    if (hero) hero.style.backgroundPositionY = 'calc(40% + ' + (sy * 0.3) + 'px)';
+
+    /* Hero text: floats up faster than page — exiting early */
+    if (heroText) heroText.style.transform = 'translateY(' + (sy * 0.22) + 'px)';
+
+    /* Pass card area: moves slower — feels further from camera */
+    if (heroCard) {
+      /* Don't override the card tilt transform — apply to SCENE wrapper */
+      heroCard.style.transform = 'translateY(' + (sy * 0.09) + 'px)';
+    }
+
+    /* Scroll indicator fades fast */
+    if (scrollInd) scrollInd.style.opacity = Math.max(0, 1 - sy / 160);
+
+    /* Stamp: counter-parallax + slow rotation */
+    if (stamp) {
+      var rel = sy - tops.stamp + wh_win;
+      stamp.style.transform = 'translateY(' + (rel * -0.18) + 'px) rotate(' + (-4 + rel * 0.007) + 'deg)';
+    }
+
+    /* Pillars header: rises as section scrolls in */
+    if (ph && sy + wh_win > tops.pillars) {
+      var rel = sy - tops.pillars + wh_win;
+      ph.style.transform = 'translateY(' + (rel * -0.07) + 'px)';
+    }
+
+    /* Voices header + grid: different rates = depth */
+    if (sy + wh_win > tops.voices) {
+      var rel = sy - tops.voices + wh_win;
+      if (vh) vh.style.transform = 'translateY(' + (rel * -0.09) + 'px)';
+      if (vg) vg.style.transform = 'translateY(' + (rel * -0.04) + 'px)';
+    }
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(tick); }
+  }, { passive: true });
+
+  tick(); /* init */
 })();
 </script>
 
