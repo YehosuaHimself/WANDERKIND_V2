@@ -157,12 +157,15 @@ nav {
 }
 .nav-logo {
   font-weight: 900;
-  font-size: 13px;
+  font-size: 18px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--gold);
   pointer-events: auto;
+  text-decoration: none;
+  transition: color 0.2s;
 }
+.nav-logo:hover { color: var(--gold-soft); }
 .nav-status {
   font-family: 'Courier New', monospace;
   font-size: 10px;
@@ -659,6 +662,11 @@ nav {
   grid-template-columns: 1fr 1fr;
   gap: 80px;
   align-items: center;
+  justify-items: center;
+}
+.manifesto-text {
+  justify-self: start;
+  width: 100%;
 }
 
 .manifesto-text .eyebrow {
@@ -1210,7 +1218,7 @@ footer {
 
 <!-- ── NAV ── -->
 <nav>
-  <span class="nav-logo">Wanderkind</span>
+  <a href="#hero" class="nav-logo">Wanderkind</a>
   <span class="nav-status mono">Coming 2026</span>
 </nav>
 
