@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+/* ── CURSOR NUKE JS — runs before first paint and on every mutation ── */
+(function(){
+  var s='cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==") 0 0,none!important';
+  function kill(){document.documentElement.style.cssText+=(';'+s);document.body&&(document.body.style.cssText+=(';'+s));}
+  kill();
+  document.addEventListener('DOMContentLoaded',kill);
+  if(typeof MutationObserver!=='undefined'){
+    new MutationObserver(kill).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']});
+  }
+})();
+</script>
 <!-- CURSOR KILL — must be first so cursor:none is set before any paint -->
 <style>html,body,*{cursor:none!important}</style>
 <meta charset="UTF-8">
@@ -1673,7 +1685,32 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
   .scroll-indicator, .ticker, .pass-card__kinetic-track,
   .pass-card__pulse { animation: none; will-change: auto; }
   .pass-card__thread { animation: none; }
-}</style>
+}
+/* ══ CURSOR NUKE — v2 · permanent · no system cursor ever ══════════════════
+   Three-layer approach:
+   1. Inline style on <html> via JS (handles dynamic iframes / shadow DOM)
+   2. CSS !important on every selector imaginable
+   3. ::file-selector-button, ::webkit-scrollbar-thumb, etc.
+   The 1px transparent PNG satisfies browsers requiring a url() value.        */
+:root{--cur-none:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==") 0 0,none}
+*,*::before,*::after,
+html,body,
+a,button,input,select,textarea,label,summary,details,
+[role=button],[role=link],[role=textbox],[role=checkbox],[role=radio],
+[role=menuitem],[role=option],[role=tab],[role=slider],
+[tabindex],[contenteditable],[draggable],
+::placeholder,::file-selector-button,::selection,
+:hover,:focus,:active,:focus-visible,:focus-within,
+:disabled,[disabled],[readonly],
+input[type=text],input[type=password],input[type=email],
+input[type=search],input[type=number],input[type=tel],
+input[type=url],input[type=date],input[type=range],
+input[type=checkbox],input[type=radio],input[type=file],
+input[type=submit],input[type=reset],input[type=button],
+select option,optgroup,
+iframe,embed,object,video,canvas,svg,img,
+[style*="cursor"]{cursor:var(--cur-none)!important}
+</style>
 </head>
 <body>
 <!-- Custom cursor stubs — static HTML so they exist before any JS runs -->
