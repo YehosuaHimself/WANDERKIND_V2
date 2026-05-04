@@ -578,7 +578,7 @@ nav {
   display: flex;
   flex-direction: column;
   will-change: transform;
-  container-type: inline-size;
+  contain: layout style; /* perf: contain layout recalc to card */
 }
 .pass-card--main {
   background: linear-gradient(175deg, #140D08 0%, #0B0705 50%, #1A120A 100%);
@@ -613,11 +613,9 @@ nav {
   transform: rotate(-35deg); top: -50%; left: -20%; width: 200%; height: 300%;
 }
 
-/* Security thread — translateX(cqw) = composited; left = layout trigger */
+/* Security thread */
 .pass-card__thread {
   position: absolute; top: 0; bottom: 0; width: 1.5px; pointer-events: none;
-  left: 0;
-  will-change: transform;
   animation: thread-sweep 8s ease-in-out infinite;
 }
 .pass-card--main .pass-card__thread    { background: linear-gradient(180deg, transparent 10%, #C8762A 50%, transparent 90%); }
@@ -625,9 +623,9 @@ nav {
 .pass-card--hospitality .pass-card__thread { background: linear-gradient(180deg, transparent 10%, #4CA864 50%, transparent 90%); }
 .pass-card--water .pass-card__thread   { background: linear-gradient(180deg, transparent 10%, #4CA8C9 50%, transparent 90%); }
 @keyframes thread-sweep {
-  0%   { transform: translateX(25cqw); opacity: 0.2; }
-  50%  { transform: translateX(75cqw); opacity: 0.5; }
-  100% { transform: translateX(25cqw); opacity: 0.2; }
+  0%   { left: 25%; opacity: 0.2; }
+  50%  { left: 75%; opacity: 0.5; }
+  100% { left: 25%; opacity: 0.2; }
 }
 
 /* Corner guards */
@@ -1673,7 +1671,8 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
   #wk-intro { transition: none; opacity: 0; pointer-events: none; }
   .lr-inner { transition: none; transform: none; }
   .scroll-indicator, .ticker, .pass-card__kinetic-track,
-  .pass-card__pulse, .pass-card__thread { animation: none; will-change: auto; }
+  .pass-card__pulse { animation: none; will-change: auto; }
+  .pass-card__thread { animation: none; }
 }</style>
 </head>
 <body>
