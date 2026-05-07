@@ -71,6 +71,10 @@ export default async function render() {
     suToggleBtn.style.color = suPwVisible ? 'var(--amber)' : 'var(--ink3)';
   });
 
+  // Pre-fill trail name if user came through the onboarding flow (trail-name → role-select → here)
+  const savedTrailName = sessionStorage.getItem('wk_trail_name');
+  if (savedTrailName) el.querySelector('#su-name').value = savedTrailName;
+
   el.querySelector('#signup-btn').addEventListener('click', async () => {
     const name     = el.querySelector('#su-name').value.trim();
     const email    = el.querySelector('#su-email').value.trim();
@@ -82,6 +86,10 @@ export default async function render() {
     const { data, error } = await signUpWithEmail(email, password, { trail_name: name });
     btn.disabled = false; btn.textContent = 'Create Account';
     if (error) return toastError(error.message);
+
+    // Clear onboarding sessionStorage now that signup succeeded
+    sessionStorage.removeItem('wk_trail_name');
+    sessionStorage.removeItem('wk_role');
 
     // If email confirmation is off (auto-confirmed), data.session exists → go straight in
     if (data?.session) {
