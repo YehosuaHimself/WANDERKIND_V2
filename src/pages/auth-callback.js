@@ -28,11 +28,10 @@ export default async function render() {
   });
 
   // Timeout safety valve — 15s then give up
-  setTimeout(() => {
+  setTimeout(async () => {
     subscription.unsubscribe();
-    if (!supabase.auth.getSession()?.data?.session) {
-      navigate('auth/signin', { replace: true });
-    }
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) navigate('auth/signin', { replace: true });
   }, 15000);
 
   return el;
