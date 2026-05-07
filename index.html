@@ -14,7 +14,7 @@ html,body,*{cursor:none!important}</style>
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#060a15">
-<meta name="apple-mobile-web-app-capable" content="yes">
+
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="Wanderkind — A sovereign travel identity for everyone who moves through the world with intention. Coming 2026.">
 <title>WANDERKIND — A Sovereign Travel Identity</title>
@@ -2670,5 +2670,13 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
         ? document.addEventListener('DOMContentLoaded', initMobileGate)
         : initMobileGate();
     </script>
-  </body>
+  
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
+</body>
 </html>
