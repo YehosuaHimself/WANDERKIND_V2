@@ -1,5 +1,5 @@
 const CACHE = 'wk-v1';
-const PRECACHE = ['/', '/index.html'];
+const PRECACHE = ['/', '/index.html', '/js/gate-mobile.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)));
