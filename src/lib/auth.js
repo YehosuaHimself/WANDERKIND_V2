@@ -37,19 +37,25 @@ export async function ensureProfile(user) {
 }
 
 export async function initAuth() {
-  // Handle PKCE code exchange: if URL has ?code=, Supabase needs to process it.
-  // We redirect to auth/callback page FIRST so the spinner shows, then getSession()
-  // will have time to exchange. We clear the code from the URL immediately.
+  // Handle PKCE code exchange: if URL has ?code= or ?token_hash=, Supabase needs
+  // those params present in the URL when getSession() is called so it can exchange
+  // them for a session. Show the callback spinner FIRST, then call getSession()
+  // (which consumes the params), and only AFTER that clean the URL.
   const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has('code') || urlParams.has('token_hash')) {
-    window.history.replaceState({}, '', window.location.pathname);
-    // Point the hash router at callback so it shows a spinner
+  const hasPkceParams = urlParams.has('code') || urlParams.has('token_hash');
+  if (hasPkceParams) {
+    // Point the hash router at callback so it shows a spinner while we exchange
     if (!location.hash.startsWith('#auth/callback')) {
       location.hash = '#auth/callback';
     }
   }
 
   const { data: { session } } = await supabase.auth.getSession();
+
+  // Now it's safe to strip the PKCE params — Supabase has already consumed them
+  if (hasPkceParams) {
+    window.history.replaceState({}, '', window.location.pathname + location.hash);
+  }
   _session = session;
 
   supabase.auth.onAuthStateChange(async (_event, session) => {
