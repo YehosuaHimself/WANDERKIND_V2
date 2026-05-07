@@ -2662,14 +2662,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 })();
 }); /* end requestIdleCallback */
 </script>
-
-
-    <script type="module">
-      import { initMobileGate } from '/js/gate-mobile.js';
-      document.readyState === 'loading'
-        ? document.addEventListener('DOMContentLoaded', initMobileGate)
-        : initMobileGate();
-    </script>
   
   <script>
     if ('serviceWorker' in navigator) {
@@ -2678,5 +2670,175 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
       });
     }
   </script>
+
+<script>
+  (function() {
+    'use strict';
+
+    // 1. Already installed?
+    var isStandalone =
+      window.navigator.standalone === true ||
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.matchMedia('(display-mode: fullscreen)').matches;
+    if (isStandalone) return;
+
+    // 2. Device detection
+    var ua = navigator.userAgent || '';
+    var isIOS = /iPhone|iPad|iPod/i.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var isAndroid = /Android/i.test(ua);
+    if (!isIOS && !isAndroid) return;
+
+    // 3. 7-day dismissal cooldown
+    var DISMISS_KEY = 'wk_gate_dismissed_at';
+    var COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+    try {
+      var dismissedAt = parseInt(localStorage.getItem(DISMISS_KEY) || '0', 10);
+      if (Date.now() - dismissedAt < COOLDOWN_MS) return;
+    } catch(e) {}
+
+    // 4. Run after DOM is ready
+    function run() {
+      var deferredPrompt = window._wkDeferredPrompt || null;
+      var isAndroidNative = isAndroid && !!deferredPrompt;
+
+      // 5. Styles
+      if (!document.getElementById('wk-gate-styles')) {
+        var s = document.createElement('style');
+        s.id = 'wk-gate-styles';
+        s.textContent = [
+          '@keyframes wk-gate-in{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}',
+          '@keyframes wk-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}',
+          '@keyframes wk-fade{from{opacity:0}to{opacity:1}}',
+          '#wk-gate-bd{position:fixed;inset:0;background:rgba(6,10,21,.78);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:9998;animation:wk-fade .25s ease forwards}',
+          '#wk-gate-modal{position:fixed;left:0;right:0;bottom:0;z-index:9999;max-width:480px;margin:0 auto;background:linear-gradient(160deg,#0d1530 0%,#080e1f 100%);border-top:1px solid rgba(201,168,76,.25);border-radius:20px 20px 0 0;padding:28px 24px 40px;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:#e8e4d9;animation:wk-gate-in .45s cubic-bezier(.22,1,.36,1) forwards;box-shadow:0 -8px 40px rgba(0,0,0,.65)}',
+          '#wk-gate-modal .wk-handle{width:36px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:0 auto 22px}',
+          '#wk-gate-modal .wk-x{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.45);width:30px;height:30px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:background .2s,color .2s;-webkit-tap-highlight-color:transparent}',
+          '#wk-gate-modal .wk-x:hover{background:rgba(255,255,255,.15);color:#fff}',
+          '#wk-gate-modal .wk-brand{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#c9a84c;margin-bottom:8px;font-weight:500}',
+          '#wk-gate-modal .wk-h{font-size:22px;font-weight:700;letter-spacing:-.02em;color:#f0ece2;margin-bottom:6px;line-height:1.25}',
+          '#wk-gate-modal .wk-sub{font-size:14px;color:rgba(232,228,217,.5);margin-bottom:24px;line-height:1.5}',
+          '#wk-gate-modal .wk-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:28px}',
+          '#wk-gate-modal .wk-step{display:flex;align-items:center;gap:14px}',
+          '#wk-gate-modal .wk-ico{width:38px;height:38px;min-width:38px;border-radius:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center}',
+          '#wk-gate-modal .wk-txt{font-size:14px;color:rgba(232,228,217,.85);line-height:1.4}',
+          '#wk-gate-modal .wk-txt strong{color:#f0ece2;font-weight:600}',
+          '#wk-gate-modal .wk-btn{width:100%;padding:15px;background:linear-gradient(135deg,#c9a84c,#b8943f);border:none;border-radius:12px;color:#0d1530;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;-webkit-tap-highlight-color:transparent}',
+          '#wk-gate-modal .wk-btn:active{opacity:.85;transform:scale(.98)}',
+          '#wk-gate-modal .wk-skip{display:block;text-align:center;margin-top:14px;font-size:13px;color:rgba(232,228,217,.3);text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent}',
+          '#wk-gate-modal .wk-skip:hover{color:rgba(232,228,217,.55)}',
+          '#wk-gate-arrow{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:10000;display:flex;flex-direction:column;align-items:center;pointer-events:none;animation:wk-fade .4s .6s ease both}',
+          '#wk-gate-arrow .wk-alabel{background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:#c9a84c;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:6px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;white-space:nowrap}',
+          '#wk-gate-arrow .wk-asvg{animation:wk-bounce 1.4s ease-in-out infinite}'
+        ].join('');
+        document.head.appendChild(s);
+      }
+
+      // 6. Build modal
+      var bd = document.createElement('div');
+      bd.id = 'wk-gate-bd';
+
+      var modal = document.createElement('div');
+      modal.id = 'wk-gate-modal';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('aria-label', 'Install WANDERKIND');
+
+      var shareIconSVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v10M6 9l4 4 4-4" stroke="#c9a84c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="14" width="14" height="3" rx="1.5" fill="#c9a84c" opacity=".3"/></svg>';
+      var addIconSVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="#c9a84c" stroke-width="1.6"/><path d="M10 7v6M7 10h6" stroke="#c9a84c" stroke-width="1.7" stroke-linecap="round"/></svg>';
+      var checkIconSVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10l4.5 4.5L16 6" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      var menuIconSVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4.5" r="1.2" fill="#c9a84c"/><circle cx="10" cy="10" r="1.2" fill="#c9a84c"/><circle cx="10" cy="15.5" r="1.2" fill="#c9a84c"/></svg>';
+
+      if (isIOS) {
+        modal.innerHTML =
+          '<div class="wk-handle"></div>' +
+          '<button class="wk-x" aria-label="Dismiss">&#x2715;</button>' +
+          '<div class="wk-brand">WANDERKIND</div>' +
+          '<div class="wk-h">Add to your home screen</div>' +
+          '<div class="wk-sub">Full trail experience &#8212; offline-ready, no browser chrome.</div>' +
+          '<div class="wk-steps">' +
+            '<div class="wk-step"><div class="wk-ico">' + shareIconSVG + '</div><div class="wk-txt">Tap the <strong>Share</strong> button at the bottom of Safari</div></div>' +
+            '<div class="wk-step"><div class="wk-ico">' + addIconSVG + '</div><div class="wk-txt">Scroll down and tap <strong>&#8220;Add to Home Screen&#8221;</strong></div></div>' +
+            '<div class="wk-step"><div class="wk-ico">' + checkIconSVG + '</div><div class="wk-txt">Tap <strong>&#8220;Add&#8221;</strong> in the top-right corner</div></div>' +
+          '</div>' +
+          '<a class="wk-skip" tabindex="0">Already added? Open the app &#8594;</a>';
+      } else if (isAndroidNative) {
+        modal.innerHTML =
+          '<div class="wk-handle"></div>' +
+          '<button class="wk-x" aria-label="Dismiss">&#x2715;</button>' +
+          '<div class="wk-brand">WANDERKIND</div>' +
+          '<div class="wk-h">Install the app</div>' +
+          '<div class="wk-sub">Add to your home screen for the full offline trail experience.</div>' +
+          '<button class="wk-btn" id="wk-install-btn">Add to Home Screen</button>' +
+          '<a class="wk-skip" tabindex="0">Maybe later</a>';
+      } else {
+        modal.innerHTML =
+          '<div class="wk-handle"></div>' +
+          '<button class="wk-x" aria-label="Dismiss">&#x2715;</button>' +
+          '<div class="wk-brand">WANDERKIND</div>' +
+          '<div class="wk-h">Add to your home screen</div>' +
+          '<div class="wk-sub">Fast, offline-ready, no browser bar.</div>' +
+          '<div class="wk-steps">' +
+            '<div class="wk-step"><div class="wk-ico">' + menuIconSVG + '</div><div class="wk-txt">Tap the <strong>&#8942; Menu</strong> in your browser</div></div>' +
+            '<div class="wk-step"><div class="wk-ico">' + addIconSVG + '</div><div class="wk-txt">Tap <strong>&#8220;Add to home screen&#8221;</strong></div></div>' +
+            '<div class="wk-step"><div class="wk-ico">' + checkIconSVG + '</div><div class="wk-txt">Tap <strong>&#8220;Add&#8221;</strong> to confirm</div></div>' +
+          '</div>' +
+          '<a class="wk-skip" tabindex="0">Already added? &#8594;</a>';
+      }
+
+      document.body.appendChild(bd);
+      document.body.appendChild(modal);
+
+      // 7. iOS bouncing arrow pointing at Safari share bar
+      if (isIOS) {
+        var arrow = document.createElement('div');
+        arrow.id = 'wk-gate-arrow';
+        arrow.innerHTML =
+          '<div class="wk-alabel">Tap Share below</div>' +
+          '<svg class="wk-asvg" width="22" height="22" viewBox="0 0 24 24" fill="none">' +
+            '<path d="M12 5v14M5 14l7 7 7-7" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg>';
+        document.body.appendChild(arrow);
+      }
+
+      // 8. Dismiss logic
+      function dismiss(save) {
+        if (save) { try { localStorage.setItem(DISMISS_KEY, String(Date.now())); } catch(e) {} }
+        bd.remove(); modal.remove();
+        var a = document.getElementById('wk-gate-arrow'); if (a) a.remove();
+      }
+
+      modal.querySelector('.wk-x').addEventListener('click', function() { dismiss(true); });
+      bd.addEventListener('click', function() { dismiss(true); });
+      modal.querySelector('.wk-skip').addEventListener('click', function() { dismiss(true); });
+
+      if (isAndroidNative) {
+        document.getElementById('wk-install-btn').addEventListener('click', function() {
+          try {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function(r) {
+              window._wkDeferredPrompt = null;
+              dismiss(r.outcome === 'accepted');
+            });
+          } catch(e) { dismiss(false); }
+        });
+      }
+
+      window.addEventListener('appinstalled', function() { dismiss(false); }, { once: true });
+
+      document.addEventListener('keydown', function onKey(e) {
+        if (e.key === 'Escape') { dismiss(true); document.removeEventListener('keydown', onKey); }
+      });
+    }
+
+    // Wait for DOM
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else {
+      run();
+    }
+
+  })();
+</script>
 </body>
 </html>
