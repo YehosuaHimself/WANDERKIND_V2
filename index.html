@@ -7,6 +7,10 @@
 *,*::before,*::after,html,body,a,button,input,select,textarea,[tabindex],[contenteditable]{cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==") 0 0,none!important}
 html,body,*{cursor:none!important}</style>
 <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WANDERKIND">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#060a15">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1677,7 +1681,12 @@ footer::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%;
   .pass-card__pulse { animation: none; will-change: auto; }
   .pass-card__thread { animation: none; }
 }</style>
-</head>
+    <script>
+      window._wkDeferredPrompt = null;
+      window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window._wkDeferredPrompt = e; });
+      window.addEventListener('appinstalled', function() { window._wkDeferredPrompt = null; });
+    </script>
+  </head>
 <body>
 <!-- Custom cursor stubs — static HTML so they exist before any JS runs -->
 <div id="cursorDot"  aria-hidden="true" style="position:fixed;top:0;left:0;width:9px;height:9px;background:#C8762A;border-radius:0;pointer-events:none;z-index:2147483647;transform:translate(-9999px,-9999px);box-shadow:0 0 0 1.5px rgba(255,255,255,0.55)"></div>
@@ -2654,5 +2663,11 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 </script>
 
 
-</body>
+    <script type="module">
+      import { initMobileGate } from '/js/gate-mobile.js';
+      document.readyState === 'loading'
+        ? document.addEventListener('DOMContentLoaded', initMobileGate)
+        : initMobileGate();
+    </script>
+  </body>
 </html>
